@@ -1,0 +1,2969 @@
+// jQuery.noConflict();
+/**
+ * 
+ * @author jiudong zhu
+ * @description 插入连接式代码核心
+ */
+jQuery(function ($) {
+    var DOMAINNAME = 'huolieyun.com'
+    var hly = 'https://www.' + DOMAINNAME + '/kuaizhiChat/'
+    var hlyurl = 'https://hly.' + DOMAINNAME + '/'
+    var fkID // 获取访客ID
+    var showAlertMsgStatus = true // 是否加载小窗口
+    var mbShowAlertType = 1 // 窗口状态
+    var edition // 版本信息
+    var blacklistStatus = false // 黑名单状态值
+    var refer = document.referrer // 获取refer
+    var wordFromType = '' // 搜索引擎的类型  判断是百度还是神马
+    var onlineType
+    var rand = sessionStorage.getItem("kuaizhi_userID") // 获取rand
+    var styleId = sessionStorage.getItem("kuaizhi_style") // 获取样式ID
+    var robotId // 机器人ID
+    var code // MD5加密的code
+    var isValid // 判断链接是否有效
+    var copyRight // 版权状态
+    var forceDialongueStatus // 主动对话状态
+
+    // 获取样式设置方法
+    // PC端   窗口的样式
+    var winPcStyle // PC端  窗口样式  1.标准对话框  2 侧边对话框  3迷你对话框
+    var winPcColor // PC端  窗口  主题颜色
+    var winPcStation // PC端  窗口位置   1. 页面右侧   2 页面左侧  3 页面中间
+    var winPcSideMargin // PC端  窗口  侧边距  
+    var winPcBottomMargin // PC端  窗口  底边距
+    var pcFontSize // PC端  窗口 字号
+    var pcFontColor // PC端  窗口  字体颜色
+    var winPcFillet // PC端  窗口   圆角值
+    var pcIsIndividualWindows // PC端  窗口 打开独立窗口 1. 打开独立窗口  0 不打开独立窗口
+    var pcFrameEffect // PC端  动画类型   0.没有动画  1.自下而上 2.从右到左 3，淡入淡出
+    var winPcHeight // PC端  窗口 高度值
+    var winPcWidth // PC端  窗口 宽度值
+    var winPcFull // PC端  全屏控制  1 全屏  0 非全屏
+    // 以上为窗口样式以及配置
+
+    // 手机端  窗口样式
+    var winPhoneStyle // 手机端  窗口样式  1 弹窗样式  2 全屏样式
+    var winPhoneColor // 手机端  窗口   主题颜色
+    var phoneFontSize // 手机端  窗口   字号
+    var phoneFontColor // 手机端  窗口 字体颜色
+    // 以上为手机端  窗口样式
+
+    // PC端  按钮样式
+    var buttonPcId // PC端   按钮类型 1,悬浮按钮 2.底部按钮  3 侧边按钮
+    var buttonPcColor // PC端  按钮颜色  
+    var buttonPcShow // PC端  按钮   鼠标悬浮文字  0 不显示  1显示
+    var buttonPcShowstatusTips //  PC端  按钮   鼠标悬浮文字  1 移入显示  2常显示
+    var dialogpReviewState // PC端  按钮  鼠标悬浮文字  1 开启 0 关闭
+
+
+    var buttonPcMarginTop // PC端  侧边按钮  上边距比例 0-100  50为居中
+    var buttonPcOnlinePicUrl // PC端  按钮  在线图片地址
+    var buttonPcOnlionContent // PC端  按钮  在线鼠标悬浮文案
+    var buttonPcDisPicUrl // PC端  按钮  不在线图片地址
+    var buttonPcDisContent // PC端  按钮  不在线鼠标悬浮文字
+    var buttonPcStation // PC端  按钮 位置  1.右侧居中 2. 右侧居下 3.左侧居中 4.左侧居下
+    var buttonPcDistance // PC端  按钮  侧边距
+    var buttonPcMarginBottom // PC端  按钮  底部边距
+    var buttonPcStatus // PC端  侧边按钮  侧边收放默认状态   1  展开  2关闭
+    var pcBroadsideType // PC端  侧边按钮  自定义按钮数据
+    var pcDefalueMessage // PC端  侧边按钮  对话按钮文字定义
+    var pcBroadsideControl // PC端  按钮  侧边收放   1 启用  0 不启用 
+    var pcFillet // PC端  按钮  圆角值
+    var pcTransparency // PC端  按钮 透明度
+    var pcIsMoved // PC端  按钮 拖拽功能  1可以   0不可以
+    var pcFrontColor // PC端  按钮  焦点色
+    var pcStowingMode // PC端  按钮 收起方式  1  侧边收起 2. 收缩收起
+    var pcBlockSpacing // PC端  按钮  侧边按钮模块间距
+    var buttonPcIconName // PC端  图标名称开关  ( 底部按钮使用 )
+    var buttonPcIconContent // PC端  图表名称 （ 底部按钮使用 ）
+    var buttonPcSecondary // PC端  是否启用副按钮 1 启用  0 不启用
+    var buttonPcEffect // PC端  按钮动效 1启用  0不启用
+    var buttonPcCircle // PC端  按钮  类型  1 默认按钮  2  自定义按钮
+    var buttonPcPic // PC端  按钮 自定义按钮图片
+    var secondaryButton // PC端  副按钮字段
+
+
+
+    // 以上为PC端按钮样式以及配置
+
+    // 以下为副按钮字段
+    var ViceButtonPcId // 副按钮ID
+    var ViceButtonPcColor // 副按钮  颜色
+    var ViceButtonPcShow // 副按钮  鼠标悬浮提示是否展示
+    var ViceButtonPcOnlinePic // 副按钮  在线图片
+    var ViceButtonPcOnlionContent // 副按钮  在线提示
+    var ViceButtonPcDisPic // 副按钮  离线图片
+    var ViceButtonPcDisContent // 副按钮  离线提示
+    var ViceButtonPcStation // 副按钮  定位 
+    var ViceButtonPcDistance // 副按钮  侧边距
+    var ViceButtonPcMarginBottom // 副按钮  底边距
+    var VicePcFillet // 副按钮  圆角值
+    var VicePcTransparency // 副按钮  透明度 
+    var ViceButtonPcEffect // 副按钮  按钮动效
+    var ViceButtonPcCircle // 副按钮  按钮类型  1默认按钮  2 自定义按钮
+    var ViceButtonPcPic // 按钮自定义图片
+    var ViceButtonPcIconContent // 副按钮  图表名称 （ 底部按钮使用 ）
+    var ViceSecDialogpReviewState
+    var ViceSecStatusTips
+
+    // 手机端按钮样式
+    var buttonPhoneId // 手机端  按钮  按钮类型  1 悬浮按钮 2 底部按钮 3 侧边按钮
+    var buttonPhoneColor // 手机端  按钮  主题颜色
+    var buttonPhoneStation // 手机端  按钮  按钮位置  1 右侧居中 2 右侧居下 3 左侧居中 4 左侧居下
+    var phoneFillet // 手机端  按钮  圆角度
+    var phoneTransparency // 手机端  按钮  透明度
+    var phoneIsMoved // 手机端  按钮  是否可移动 1 可以移动 0不可以移动
+    var buttonPhoneDistance // 手机端  按钮  边距00
+    var buttonPhoneOnlinePicUrl // 手机端  按钮  在线图片
+    var buttonPhoneOnlineContent // 手机端  按钮  在线内容
+    var buttonPhoneDisPicUrl // 手机端  按钮  离线图片
+    var buttonPhoneDisContent // 手机端  按钮  离线内容
+    var phoneFrontColor // 手机端  按钮  获取焦点颜色
+    var phoneStowingMode // 手机端  按钮  收起方式 0 侧边收起  1收缩收起
+    var phoneBlockSpacing // 手机端  按钮  块之间 的间距
+    var buttonPhoneStatus // 手机端  按钮  按钮状态  1.展开  0.收起
+    var phoneBroadsideType // 手机端  按钮  自定义内容
+    var buttonPhoneShow // 手机端  按钮  显示文字   1 显示  0 不显示
+    var buttonPhoneCircle // 手机端  1 默认  2 自定义按钮
+    var buttonPhonePic // 手机端  自定义按钮的图片
+    var buttonPhoneMarginBottom // 手机端按钮底边距离
+
+
+    // 头像
+    var imgFillet
+    var imgCover
+
+
+
+    // PC按钮配置方法集合
+    var kzHover = '' //  鼠标悬浮弹窗
+    var kzBtnImg = '' //  按钮图片
+    var kzHoverMsg = '' //  鼠标悬浮 内容
+    var buttonPcStationClassName = '' //  按钮定位  
+    var kzSideBtnPositionClassName = '' // 侧边按钮的位置定位
+    var kzHoverArrowClassName = '' // 鼠标悬浮的按钮
+    var buttonPcDistanceStyleValue = '' // 按钮侧边距
+    var buttonPcMarginBottomStyleValue = '' // 按钮底部距
+    var buttonPcEffectTag = '' // 按钮动效
+    var pcFilletStyleSet = '' // 按钮圆角值
+    var kzSideBtnPositionUlClassName = '' // 侧边按钮内部定位 （涉及动画移动效果）
+    var kzSideBtnMsgClassName = '' // 侧边按钮  侧边点击提示栏
+
+    // 手机端按钮配置方法集合
+    var kzmbPositionClassName = '' // 按钮定位
+    var kzmbBtnImg = '' // 手机按钮的图片
+    var kzmbBtnContent = '' // 手机按钮 在线状态  离线状态
+    var kzmbPhoneBroadsideType = '' // 手机按钮数据值
+
+
+    var vicekzHover = '' // 鼠标悬浮弹窗
+    var vicekzBtnImg = '' // 按钮图片
+    var vicekzHoverMsg = '' //  鼠标悬浮 内容
+    var vicebuttonPcStationClassName = '' //  按钮定位  
+    var vicekzHoverArrowClassName = '' // 鼠标悬浮的按钮
+    var vicebuttonPcDistanceStyleValue = '' // 按钮侧边距
+    var vicebuttonPcMarginBottomStyleValue = '' // 按钮底部距
+    var vicebuttonPcEffectTag = '' // 按钮动效
+    var vicepcFilletStyleSet = '' // 按钮圆角值
+    var statisticsId //  也不知道是啥值   用了再说
+    var windowleft // 窗口的偏移位置  左
+    var windowtop // 窗口的偏移位置  上
+    var forceDialongueStatus // 主动对话状态  开关
+    var initTitle = document.title // 嵌入网站的title
+    var flashMsgTitle // 初始化消息提醒的轮询
+    var flashMsgTitleSec // 初始化消息提醒的轮询
+    var flashMsgTitleInit // 初始化消息轮询 
+    var messageNum = 0
+
+    var marketRobotId = '' // 留资机器人ID
+    var kefuID = '' // 客服ID
+
+    var baiduKeyword = '' // 返回的搜索引擎关键字
+
+    var voiceStatus = 1 // 声音状态值
+    var isDelayOut // 主动对话的定时开关 1 打开 0关闭
+    var delayOutTime // 主动对话  弹窗延时时间
+    var windowSettimeout // 延时时间
+
+    localStorage.setItem('kuaizhiNum', 0) // 重置未读信息读数
+
+    // 判断浏览器是手机还是PC
+    window.kuaizhiIsPc = function () {
+        var userAgentInfo = navigator.userAgent;
+        var Agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"];
+        var flag = true;
+        for (var v = 0; v < Agents.length; v++) {
+            if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                flag = false;
+                break;
+            }
+        }
+        return flag;
+    }
+    var flag = kuaizhiIsPc()
+    // 判断搜索引擎  是百度还是还是神马
+    window.kuaizhigetUrlSearch = function (name) {
+        // 未传参，返回空
+        if (!name) return null;
+        // 查询参数：先通过search取值，如果取不到就通过hash来取
+        var after = refer.split('?')[1];
+        // 地址栏URL没有查询参数，返回空
+        if (!after) return null;
+        // 如果查询参数中没有"name"，返回空
+        if (after.indexOf(name) === -1) return null;
+
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
+        // 当地址栏参数存在中文时，需要解码，不然会乱码
+        var r = decodeURI(after).match(reg);
+        // 如果url中"name"没有值，返回空
+        if (!r) return null;
+        return r[2];
+    }
+    if (refer.indexOf('.baidu.com') != -1) {
+        // 这是百度搜索
+        var newArray = refer.split('eqid=')
+        refer = newArray[1]
+        if (refer == undefined) {
+            refer = ''
+        }
+
+        wordFromType = 1
+    }
+    if (refer.indexOf('m.sm.cn') != -1) {
+        // 这是神马搜索
+        refer = kuaizhigetUrlSearch('q')
+        wordFromType = 2
+    }
+
+
+
+    var js = document.getElementsByTagName('script')
+    for (var i = 0; i < js.length; i++) {
+        if (js[i].src.indexOf('chatJS.js') != -1) {
+            code = js[i].src.split('?')[1]
+        }
+    }
+    if (!rand) {
+        rand = ''
+    }
+    if (!styleId) {
+        styleId = ''
+    }
+    if (!code) {
+        code = ''
+    }
+
+
+    $.ajax({
+        type: 'post',
+        url: hlyurl + 'company/toVisitor/getBaseSettingInfo',
+        data: JSON.stringify({
+            'styleId': styleId,
+            'rand': rand,
+            'encryptedCode': code,
+            'sourceUrl': document.location.href
+        }),
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function (data) {
+            if (data.status == 1) {
+                console.log('总接口', data)
+                var result = data.data
+                // 获取客服在线状态
+                onlineType = result.isOnline
+                // 通过MD5加密之后解密的获取值
+                rand = result.checkCompanyStyleInfo.rand
+                styleId = result.checkCompanyStyleInfo.styleId
+                isValid = result.checkCompanyStyleInfo.isValid
+                robotId = result.checkCompanyStyleInfo.robotId
+                marketRobotId = result.checkCompanyStyleInfo.marketRobotId
+                // marketRobotId = 2
+                // 按钮样式以及窗口样式  以及小窗口弹出
+                // 执行获取访客ID
+                fkID = localStorage.getItem('fkID' + rand)
+                if (!fkID) {
+                    fkID = ''
+                }
+                try {
+                    hlyUserfun(1, hly_uinfo)
+                } catch (e) {
+                    hlyUserfun(0)
+                }
+
+                if (isValid) {
+                    styleBtnWindow(result.queryOnlyImNew)
+                    if (flag) {
+                        if (result.queryOnlyImNew.winPcDialogueNotice == 1) {
+                            showAlertMsgStatus = false
+                            showAlertMsg()
+                        }
+                    } else {
+                        mbShowAlertType = result.queryOnlyImNew.winPhoneNotice
+                        if (result.queryOnlyImNew.winPhoneDialogueNotice == 1) {
+                            showAlertMsgStatus = false
+                            if (mbShowAlertType == 1) {
+                                mbKuaizhiShowAlertBox()
+                            } else {
+                                mbKuaizhiShowAlertBox2()
+                            }
+                        }
+                    }
+                } else {
+                    return false
+                }
+
+                // 版本信息
+                edition = result.getVertionId
+
+                // 获取版权信息的状态值
+                copyRight = result.getCopyRight
+
+
+
+                // 通过窗口状态决定是否进行强制对话
+
+
+
+
+                // 强制对话的触发状态
+                forceDialongueStatus = result.visitorSelectAllSetting.forceDialongue
+
+                isDelayOut = result.visitorSelectAllSetting.isDelayOut
+                delayOutTime = result.visitorSelectAllSetting.delayOutTime
+
+                if (forceDialongueStatus == 1) {
+                    if (pcIsIndividualWindows == 1 && flag == true) {
+                        var W = window.screen.width
+                        var H = window.screen.height
+                        var h = H / 2 - 800 / 2
+                        var w = W / 2 - 600 / 2
+                        window.open('https://www.' + DOMAINNAME + '/hly/chat/' + rand + '/' + styleId, '火烈云客服', 'directories=no,height=600px,width=750px,location=0,resizable=no,top=' + h + 'px,left=' + w + 'px')
+                        return
+                    }
+                    // if (flag == true) {
+                    //     PCopenWindow(3)
+                    // } else {
+                    //     mbopenWindow(3)
+                    // }
+                    if (isDelayOut) {
+                        if (flag) {
+                            PCopenWindow(3)
+                        } else {
+                            mbopenWindow(3)
+                        }
+                        windowSettimeout = setTimeout(function () {
+                            if (flag) {
+                                kuaizhichatShow()
+                            } else {
+                                kuaizhiMobileChatShow()
+                            }
+                        }, delayOutTime * 1000)
+                    } else {
+                        windowSettimeout = setTimeout(function () {
+                            if (flag) {
+                                PCopenWindow(3)
+                                kuaizhichatShow()
+                            } else {
+                                mbopenWindow(3)
+                                kuaizhiMobileChatShow()
+                            }
+                        }, 200)
+                    }
+                } else {
+                    if (isValid) {
+                        kuaizhigPush()
+                    }
+
+                }
+
+
+
+            } else {
+                console.error(data)
+            }
+        },
+        error: function (err) {
+            console.error(err)
+        }
+    })
+
+    /* 封装方法  获取地址后方拼参 */
+    function GetRequestReferrer() {
+        var url = document.referrer; //获取url中"?"符后的字串
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            strs = str.split("&");
+            for (var i = 0; i < strs.length; i++) {
+                theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+            }
+        }
+        return theRequest;
+    }
+    var RequestReferrer = new Object();
+    RequestReferrer = GetRequestReferrer();
+
+
+
+    /**
+     * @method 获取访客IDfkid
+     * @description 根据接口获取访客id
+     */
+    window.hlyUserfun = function (e, hly_uinfo) {
+
+        try {
+            var info = new Browser();
+        } catch (e) {
+            var info = {
+                os: '',
+                osVersion: '',
+                browser: '',
+                device: ''
+            }
+        }
+        var osVersion = info.os + " " + info.osVersion
+        if (osVersion.length > 30) {
+            osVersion = osVersion.substr(0, 27) + '...'
+        }
+        if (e == 1) {
+            var dataJSON = {
+                'companyRand': rand,
+                'referDomain': document.domain,
+                'sourcePageUrl': window.location.href,
+                'isWeChat': 0,
+                'superiorSourceUrl': document.referrer,
+                'sourcePageTitle': document.title,
+                'visitorId': fkID,
+                'nickname': hly_uinfo.u_nickname,
+                'img': hly_uinfo.u_headimg,
+                'account': hly_uinfo.u_avatar,
+                'vip': hly_uinfo.u_vip,
+                'wordSearch': refer,
+                'wordFromType': wordFromType,
+                'styleId': styleId,
+                'os': osVersion,
+                'channel': info.browser,
+                'deviceTypeId': info.device == 'PC' ? 0 : info.device == 'Mobile' ? 1 : 2,
+                'visitorSourceTitle': document.title, // 来源页面标题
+                'deviceLanguage': (navigator.language || navigator.browserLanguage).toLowerCase(), // 浏览器语言
+                'resolvingPower': window.screen.width + 'x' + window.screen.height, // 分辨率
+                'visitorSourceUrl': document.referrer,
+                'xst': RequestReferrer['xst'] ? RequestReferrer['xst'] : '',
+                'referrer': document.referrer
+            }
+        } else {
+            var dataJSON = {
+                'companyRand': rand,
+                'referDomain': document.domain,
+                'sourcePageUrl': window.location.href,
+                'isWeChat': 0,
+                'superiorSourceUrl': document.referrer,
+                'sourcePageTitle': document.title,
+                'visitorId': fkID,
+                'wordSearch': refer,
+                'wordFromType': wordFromType,
+                'styleId': styleId,
+                'os': osVersion,
+                'channel': info.browser,
+                'deviceTypeId': info.device == 'PC' ? 0 : info.device == 'Mobile' ? 1 : 2,
+                'visitorSourceTitle': document.title, // 来源页面标题
+                'deviceLanguage': (navigator.language || navigator.browserLanguage).toLowerCase(), // 浏览器语言
+                'resolvingPower': window.screen.width + 'x' + window.screen.height, // 分辨率
+                'visitorSourceUrl': document.referrer,
+                'xst': RequestReferrer['xst'] ? RequestReferrer['xst'] : '',
+                'referrer': document.referrer
+            }
+        }
+        if (isValid) {
+            $.ajax({
+                // url: hlyurl + 'visitor/visitor/saveVisitorInfo',
+                url: hlyurl + 'visitor/toVisitorSide/visitorBaseInfo',
+                type: 'post',
+                dataType: 'json',
+                data: JSON.stringify(dataJSON),
+                async: false,
+                contentType: 'application/json',
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function (data) {
+                    if (data.status == 1) {
+                        console.log('visitorBaseInfo', data)
+                        fkID = data.data.saveVisitorInfo;
+                        statisticsId = data.statisticsId
+                        baiduKeyword = data.data.wordSearch
+
+                        // baiduKeyword = '我想问关键词1'
+                        localStorage.setItem('fkID' + rand, fkID);
+                        if (data.data.selectIsBlacklist == 1) {
+                            blacklistStatus = true
+                        }
+                    } else {
+                        console.error(data)
+                    }
+
+
+                }
+            });
+        }
+
+
+    }
+
+
+    $('*').each(function () {
+        var act = $(this).attr('hly_uact')
+        if (act) {
+            $(this).on('click', function () {
+                $.ajax({
+                    type: 'post',
+                    url: hlyurl + 'company/integration/behaviorIntegrationTrigger',
+                    data: JSON.stringify({
+                        'visitorId': fkID,
+                        'rand': rand,
+                        'sign': act
+                    }),
+                    contentType: 'application/json',
+                    success: function (data) {
+
+
+                        if (flag) {
+                            kuaizhichatShowforce()
+                        } else {
+                            kuaizhiMobileChatShow()
+                        }
+                        triggerFormAdd(act)
+
+                        var iframecontent = document.getElementById('kuaizhi_iframe')
+                        iframecontent.contentWindow.postMessage({
+                            msg: act,
+                            num: 1002
+                        }, '*');
+                    }
+                })
+            })
+        }
+    })
+    // 触发表单集成技术
+    window.triggerFormAdd = function (act) {
+        $.ajax({
+            type: 'post',
+            url: hlyurl + 'company/integration/triggerFormAdd',
+            data: JSON.stringify({
+                "rand": rand, //类型：String  必有字段  备注：rand
+                "sign": act //类型：String  必有字段  备注：标记名称
+            }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {},
+            error: function (err) {}
+        })
+    }
+
+
+
+    localStorage.setItem('indexName', document.title)
+    localStorage.setItem('indexUrl', document.location.href)
+
+
+    var PCBtn = {
+        // 悬浮按钮
+        floatBtn: function () {
+
+            // 鼠标悬浮弹窗
+            if (buttonPcShow == 1 && kzHoverMsg) {
+                var Hoverstyle = ''
+                var ClosekzHover = ''
+                if (buttonPcShowstatusTips == 2) {
+                    Hoverstyle = 'display:block'
+                    ClosekzHover = '<a id="KZClosekzHover"><svg t="1640918839975" class="kuaizhiInitStyle icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2476" width="32" height="32"><path d="M453.44 512L161.472 220.032a41.408 41.408 0 0 1 58.56-58.56L512 453.44 803.968 161.472a41.408 41.408 0 0 1 58.56 58.56L570.56 512l291.968 291.968a41.408 41.408 0 0 1-58.56 58.56L512 570.56 220.032 862.528a41.408 41.408 0 0 1-58.56-58.56L453.44 512z" fill="#ffffff" p-id="2477"></path></svg></a>'
+                }
+                kzHover =
+                    '<article id="kzHoverMessage" style="' + Hoverstyle + '" class="kuaizhiInitStyle kzHover ' + kzHoverArrowClassName + '">' +
+                    '<div class="kuaizhiInitStyle kzHoverMessageMB"></div>' +
+                    '<a class="kuaizhiInitStyle" id="KZHoverShowMsg">' + kzHoverMsg + '</a>' +
+                    ClosekzHover +
+                    '<span class="kuaizhiInitStyle"></span>' +
+                    '</article>'
+            }
+            // 动画效果
+            if (buttonPcEffect == 1) {
+                buttonPcEffectTag = '<article class="kuaizhiInitStyle kzAnimate kzColor kzBorderRadius"></article>'
+            }
+            // 自定义按钮设置
+            if (buttonPcCircle == 2) {
+                kzBtnImg = buttonPcPic
+            }
+            var btn =
+                '<section class="kuaizhiInitStyle kzfristBtn kzFloatBtn kzOpacity kzPosition ' + buttonPcStationClassName + '" style="display:none;' + buttonPcDistanceStyleValue + ';' + buttonPcMarginBottomStyleValue + '"><span class="kuaizhiInitStyle" id="kuaizhiNum"></span>' +
+                buttonPcEffectTag +
+                '<article onclick="kuaizhichat()" class="kuaizhiInitStyle kzBtnContent kzColor kzBorderRadius ">' +
+                '<img class="kuaizhiInitStyle kzBtnContentImg" src="' + kzBtnImg + '" alt="">' +
+                '</article>' +
+                kzHover +
+                '</section>'
+
+            $('body').append(btn)
+
+
+        },
+        // 底部按钮
+        bottomBtn: function () {
+
+
+            if (buttonPcShow == 1 && kzHoverMsg) {
+                var Hoverstyle = ''
+                var ClosekzHover = ''
+                if (buttonPcShowstatusTips == 2) {
+                    Hoverstyle = 'display:block'
+                    ClosekzHover = '<a id="KZClosekzHover"><svg t="1640918839975" class="kuaizhiInitStyle icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2476" width="32" height="32"><path d="M453.44 512L161.472 220.032a41.408 41.408 0 0 1 58.56-58.56L512 453.44 803.968 161.472a41.408 41.408 0 0 1 58.56 58.56L570.56 512l291.968 291.968a41.408 41.408 0 0 1-58.56 58.56L512 570.56 220.032 862.528a41.408 41.408 0 0 1-58.56-58.56L453.44 512z" fill="#ffffff" p-id="2477"></path></svg></a>'
+                }
+                kzHover =
+                    '<article id="kzHoverMessage" style="' + Hoverstyle + '" class="kuaizhiInitStyle kzBottomHover ' + kzHoverArrowClassName + '">' +
+                    '<div class="kuaizhiInitStyle kzHoverMessageMB"></div>' +
+                    '<a class="kuaizhiInitStyle" id="KZHoverShowMsg">' + kzHoverMsg + '</a>' +
+                    ClosekzHover +
+                    '<span class="kuaizhiInitStyle"></span>' +
+                    '</article>'
+            }
+
+            if (buttonPcIconContent) {
+                buttonPcIconContent = '<p class="kuaizhiInitStyle">' + buttonPcIconContent + '</p>'
+            } else {
+                buttonPcIconContent = ''
+            }
+
+            var btn =
+                '<section  class="kuaizhiInitStyle kzfristBtn kzBottomBtn kzPosition kzOpacity ' + buttonPcStationClassName + '" style="display:none;top:unset;' + buttonPcDistanceStyleValue + ';' + buttonPcMarginBottomStyleValue + '"><span id="kuaizhiNum" class="kuaizhiInitStyle"></span>' +
+                '<article onclick="kuaizhichat()" class="kuaizhiInitStyle kzBottomBtnContent kzColor kzBorderRadius ">' +
+                '<img class="kuaizhiInitStyle kzBottomBtnImg" src="' + kzBtnImg + '" alt="">' +
+                buttonPcIconContent +
+                '</article>' +
+                kzHover +
+                '</section>'
+            $('body').append(btn)
+
+        },
+        // 侧边按钮
+        sideBtn: function () {
+            var styleValue = ""
+            if (!buttonPcIconContent || buttonPcIconName != 1) {
+                buttonPcIconContent = ''
+                styleValue = "margin-top:0px"
+            } else {
+                buttonPcIconContent = '<p class="kuaizhiInitStyle">' + buttonPcIconContent + '</p>'
+            }
+            var btnContent = ''
+            var pcBroadsideTypeJSON = JSON.parse(pcBroadsideType)
+            if (pcBroadsideTypeJSON) {
+                for (var i = 0; i < pcBroadsideTypeJSON.length; i++) {
+                    var item = pcBroadsideTypeJSON[i]
+
+                    switch (item.type) {
+                        // 电话
+                        case 1:
+                            // 电话 按钮 说明
+                            var buttonmessage = ''
+
+                            if (buttonPcIconName == 1) {
+                                buttonmessage = '<p class="kuaizhiInitStyle">' + item.defaultCopy + '</p>'
+                            } else {
+                                styleValue = "margin-top:0px"
+                            }
+
+                            // 鼠标悬浮效果
+                            var kzSideHover = ''
+                            // 电话的二维码
+                            var qrCode = ''
+                            if (item.qrCode) {
+                                qrCode =
+                                    '<div class="kuaizhiInitStyle">' +
+                                    '<img class="kuaizhiInitStyle" src="data:image/png;base64,' + item.qrCode + '" alt="">' +
+                                    '</div>'
+                            }
+                            if (item.buttonContent) {
+                                kzSideHover =
+                                    '<article class="kuaizhiInitStyle kzSideHover ' + kzHoverArrowClassName + '"> <img class="kuaizhiInitStyle tel"  src="https://www.' + DOMAINNAME + '/kuaizhiChat/images/icontel.png" /> ' +
+                                    '<a class="kuaizhiInitStyle" style="font-size:16px;color:#666B78">' + item.buttonContent + '</a>' +
+                                    qrCode +
+                                    '扫码可直接拨打电话' +
+                                    '<span class="kuaizhiInitStyle"></span>' +
+                                    '</article>'
+                            }
+
+
+                            // 按钮内容
+                            var Content =
+                                '<li class="kuaizhiInitStyle">' +
+                                '<article class="kuaizhiInitStyle kzIcon kzColor kzBorderRadius">' +
+                                '<img style="' + styleValue + '" class="kuaizhiInitStyle" src="' + item.icon + '" alt="">' +
+                                buttonmessage +
+                                '</article>' +
+                                kzSideHover +
+                                '</li>'
+
+                            btnContent += Content
+                            break;
+                            // 微信
+                        case 2:
+                            // 微信 按钮 说明
+                            var buttonmessage = ''
+                            if (buttonPcIconName == 1) {
+                                buttonmessage = '<p class="kuaizhiInitStyle">' + item.defaultCopy + '</p>'
+                            } else {
+                                styleValue = "margin-top:0px"
+                            }
+
+
+                            // 微信二维码图片
+                            var picture = ''
+                            if (item.picture) {
+                                picture =
+                                    '<div class="kuaizhiInitStyle">' +
+                                    '<img class="kuaizhiInitStyle" src=' + item.picture + ' alt="">' +
+                                    '</div>'
+                            }
+
+                            // 鼠标悬浮效果
+                            var kzSideHover = ''
+                            if (item.buttonContent || picture) {
+                                kzSideHover =
+                                    '<article class="kuaizhiInitStyle kzSideHover ' + kzHoverArrowClassName + '">' +
+                                    picture +
+                                    item.buttonContent +
+                                    '<span class="kuaizhiInitStyle"></span>' +
+                                    '</article>'
+                            }
+
+                            // 按钮内容
+                            var Content =
+                                '<li class="kuaizhiInitStyle">' +
+                                '<article class="kuaizhiInitStyle kzIcon kzColor kzBorderRadius">' +
+                                '<img style="' + styleValue + '" class="kuaizhiInitStyle" src="' + item.icon + '" alt="">' +
+                                buttonmessage +
+                                '</article>' +
+                                kzSideHover +
+                                '</li>'
+
+                            btnContent += Content
+
+                            break;
+                            // QQ
+                        case 3:
+                            // QQ 按钮 说明
+                            var buttonmessage = ''
+                            if (buttonPcIconName == 1) {
+                                buttonmessage = '<p class="kuaizhiInitStyle">' + item.defaultCopy + '</p>'
+                            } else {
+                                styleValue = "margin-top:0px"
+                            }
+                            // 鼠标悬浮效果
+                            var kzSideHover = ''
+                            if (item.buttonContent) {
+                                kzSideHover =
+                                    '<article class="kuaizhiInitStyle kzSideHover ' + kzHoverArrowClassName + '">' +
+                                    item.buttonContent +
+                                    '<span class="kuaizhiInitStyle"></span>' +
+                                    '</article>'
+                            }
+
+                            // 按钮内容
+                            var Content =
+                                '<li class="kuaizhiInitStyle">' +
+                                '<article class="kuaizhiInitStyle kzIcon kzColor kzBorderRadius"><a href="tencent://message/?uin=' + item.buttonContent + '&Site=&Menu-=yes">' +
+                                '<img style="' + styleValue + '" class="kuaizhiInitStyle" src="' + item.icon + '" alt="">' +
+                                buttonmessage +
+                                '</a></article>' +
+                                kzSideHover +
+                                '</li>'
+
+                            btnContent += Content
+
+                            break;
+                            // 阿里旺旺
+                        case 4:
+                            // 阿里旺旺 按钮 说明
+                            var buttonmessage = ''
+                            if (buttonPcIconName == 1) {
+                                buttonmessage = '<p class="kuaizhiInitStyle">' + item.defaultCopy + '</p>'
+                            } else {
+                                styleValue = "margin-top:0px"
+                            }
+
+                            // 鼠标悬浮效果
+                            var kzSideHover = ''
+                            if (item.buttonContent) {
+                                kzSideHover =
+                                    '<article class="kuaizhiInitStyle kzSideHover ' + kzHoverArrowClassName + '">' +
+                                    '<a class="kuaizhiInitStyle" href=' + item.aliUrl + '>' + item.buttonContent + '</a>' +
+                                    '<span class="kuaizhiInitStyle"></span>' +
+                                    '</article>'
+                            }
+
+                            // 按钮内容
+                            var Content =
+                                '<li class="kuaizhiInitStyle">' +
+                                '<article class="kuaizhiInitStyle kzIcon kzColor kzBorderRadius">' +
+                                '<img style="' + styleValue + '" class="kuaizhiInitStyle" src="' + item.icon + '" alt="">' +
+                                buttonmessage +
+                                '</article>' +
+                                kzSideHover +
+                                '</li>'
+
+                            btnContent += Content
+                            break;
+                            // 微信公众号
+                        case 5:
+                            // 微信公众号 按钮 说明
+                            var buttonmessage = ''
+                            if (buttonPcIconName == 1) {
+                                buttonmessage = '<p class="kuaizhiInitStyle">' + item.defaultCopy + '</p>'
+                            } else {
+                                styleValue = "margin-top:0px"
+                            }
+
+
+                            // 微信二维码图片
+                            var picture = ''
+                            if (item.picture) {
+                                picture =
+                                    '<div class="kuaizhiInitStyle">' +
+                                    '<img class="kuaizhiInitStyle" src=' + item.picture + ' alt="">' +
+                                    '</div>'
+                            } else {
+                                picture = ''
+                            }
+
+                            // 鼠标悬浮效果
+                            var kzSideHover = ''
+                            if (item.buttonContent || picture) {
+                                kzSideHover =
+                                    '<article class="kuaizhiInitStyle kzSideHover ' + kzHoverArrowClassName + '">' +
+                                    picture +
+                                    item.buttonContent +
+                                    '<span class="kuaizhiInitStyle"></span>' +
+                                    '</article>'
+                            }
+
+                            // 按钮内容
+                            var Content =
+                                '<li class="kuaizhiInitStyle">' +
+                                '<article class="kuaizhiInitStyle kzIcon kzColor kzBorderRadius">' +
+                                '<img style="' + styleValue + '" class="kuaizhiInitStyle" src="' + item.icon + '" alt="">' +
+                                buttonmessage +
+                                '</article>' +
+                                kzSideHover +
+                                '</li>'
+
+                            btnContent += Content
+                            break;
+                            // 自定义按钮
+                        case 6:
+                            //  自定义按钮  
+                            var buttonmessage = ''
+                            if (buttonPcIconName == 1) {
+                                buttonmessage = '<p class="kuaizhiInitStyle">' + item.defaultCopy + '</p>'
+                            } else {
+                                styleValue = "margin-top:0px"
+                            }
+
+
+                            // 微信二维码图片
+                            var picture = ''
+                            if (item.picture) {
+                                picture =
+                                    '<div class="kuaizhiInitStyle">' +
+                                    '<img class="kuaizhiInitStyle" src=' + item.picture + ' alt="">' +
+                                    '</div>'
+                            } else {
+                                picture = ''
+                            }
+
+                            // 鼠标悬浮效果
+                            var kzSideHover = ''
+                            if (item.textType == 1 && (item.buttonContent || picture)) {
+                                kzSideHover =
+                                    '<article class="kuaizhiInitStyle kzSideHover ' + kzHoverArrowClassName + '">' +
+                                    picture +
+                                    item.buttonContent +
+                                    '<span class="kuaizhiInitStyle"></span>' +
+                                    '</article>'
+                            } else {
+                                kzSideHover =
+                                    '<article class="kuaizhiInitStyle kzSideHover ' + kzHoverArrowClassName + '">' +
+                                    item.richtext +
+                                    '<span class="kuaizhiInitStyle"></span>' +
+                                    '</article>'
+                            }
+
+                            // 按钮内容
+                            var Content =
+                                '<li class="kuaizhiInitStyle">' +
+                                '<article class="kuaizhiInitStyle kzIcon kzColor kzBorderRadius">' +
+                                '<img style="' + styleValue + '" class="kuaizhiInitStyle" src="' + item.icon + '" alt="">' +
+                                buttonmessage +
+                                '</article>' +
+                                kzSideHover +
+                                '</li>'
+                            btnContent += Content
+                            break;
+                            // 链接
+                        case 7:
+                            // 链接 按钮 说明
+                            var buttonmessage = ''
+                            if (buttonPcIconName == 1) {
+                                buttonmessage = '<p class="kuaizhiInitStyle">' + item.defaultCopy + '</p>'
+                            } else {
+                                styleValue = "margin-top:0px"
+                            }
+
+                            // 按钮内容
+                            var Content =
+                                '<li class="kuaizhiInitStyle">' +
+                                '<article class="kuaizhiInitStyle kzIcon kzColor kzBorderRadius"><a href="' + item.linkUrl + '">' +
+                                '<img style="width:40px;' + styleValue + '" class="kuaizhiInitStyle" src="' + item.icon + '" alt="">' +
+                                buttonmessage +
+                                '</a></article>' +
+                                '</li>'
+
+                            btnContent += Content
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            // 按钮位置 
+            var Arrow = ''
+            var FlipArrow = ''
+            if (buttonPcStation == 1) {
+                Arrow = '<img class="kuaizhiInitStyle" src="https://www.' + DOMAINNAME + '/kuaizhiChat/images/right.png" alt="">'
+                FlipArrow = '<img class="kuaizhiInitStyle" src="https://www.' + DOMAINNAME + '/kuaizhiChat/images/left.png" alt="">'
+            }
+            if (buttonPcStation == 3) {
+                Arrow = '<img class="kuaizhiInitStyle" src="https://www.' + DOMAINNAME + '/kuaizhiChat/images/left.png" alt="">'
+                FlipArrow = '<img class="kuaizhiInitStyle" src="https://www.' + DOMAINNAME + '/kuaizhiChat/images/right.png" alt="">'
+            }
+            var kzSideHoverContent = ''
+            if (kzHoverMsg) {
+                kzSideHoverContent =
+                    '<article class="kuaizhiInitStyle kzSideHover ' + kzHoverArrowClassName + '">' +
+                    kzHoverMsg +
+                    '<span class="kuaizhiInitStyle"></span>' +
+                    '</article>'
+            } else {
+                kzHoverMsg = ''
+            }
+
+
+
+
+            // 外部箭头
+            var kzSideBtnMsgContent = ''
+            // 内部箭头
+            var kzIconMini = ''
+
+            if (pcBroadsideControl == 1) {
+                // 外部箭头赋值
+                kzSideBtnMsgContent =
+                    '<article class="kuaizhiInitStyle kzSideBtnMsg kzColor showkzSideBtnContent ' + kzSideBtnMsgClassName + '">' +
+                    kzHoverMsg +
+                    FlipArrow +
+                    '</article>'
+                // 内部箭头赋值
+                kzIconMini = '<li class="kuaizhiInitStyle">' +
+                    '<article class="kuaizhiInitStyle kzIconMini kzColor kzBorderRadius hidekzSideBtnContent">' +
+                    Arrow +
+                    '</article>' +
+                    '</li>'
+            } else {
+                kzSideBtnPositionUlClassName = ''
+            }
+
+            var trans = ''
+            if (buttonPcMarginTop > 70) {
+                trans = 'transform: translate(0%, -100%);'
+            }
+            if (buttonPcMarginTop < 30) {
+                trans = 'transform: translate(0%, 0%);'
+            }
+
+            var btn =
+                '<section style="display:none;top:' + buttonPcMarginTop + '%;' + trans + '" class="kuaizhiInitStyle kzfristBtn kzOpacity kzSideBtn kzPosition ' + kzSideBtnPositionClassName + '">' +
+                '<ul class="kuaizhiInitStyle kzSideBtnContent ' + kzSideBtnPositionUlClassName + '">' +
+                btnContent +
+                '<li class="kuaizhiInitStyle">' +
+                '<article onclick="kuaizhichat()" class="kuaizhiInitStyle kzIcon kzColor kzBorderRadius "><span id="kuaizhiNum"></span>' +
+                '<img style="' + styleValue + '" class="kuaizhiInitStyle" src="' + kzBtnImg + '" alt="">' +
+                buttonPcIconContent +
+                '</article>' +
+                kzSideHoverContent +
+                '</li>' +
+                kzIconMini +
+                '</ul>' +
+                kzSideBtnMsgContent +
+                '</section>'
+
+            $('body').append(btn)
+
+        }
+    }
+
+    var floatBtnTop = 0
+    var floatBtnLeft = 0
+    // 手机按钮配置方法集合
+    var MBBtn = {
+        floatBtn: function () {
+            var btn =
+                '<section style="display:none" class="kuaizhiInitStyle kzmbFloatBtn kzmbPosition ' + kzmbPositionClassName + ' kzmbOpacity"><span id="kuaizhiNum"></span>' +
+                '<div onclick="kuaizhiMobileChat()" class="kuaizhiInitStyle kzmbFloatBtnContent kzmbColor kzmbBorderRadius">' +
+                '<img class="kuaizhiInitStyle kzmbImg" src="' + kzmbBtnImg + '" alt="">' +
+                '</div>' +
+                '</section>'
+            $('body').append(btn)
+            var winW = window.innerWidth;
+            var winH = window.innerHeight;
+            var divH = window.innerHeight * 0.09;
+            var divW = window.innerHeight * 0.09;
+            if (phoneIsMoved == 1) {
+
+                kzmbBtnMove($('.kzmbFloatBtn').attr('id', 'kzmbFloatBtn'))
+                // $(document).addEventListener('touchstart',kzmbBtnMove($('.kzmbFloatBtn').attr('id', 'kzmbFloatBtn')))
+            }
+            if (buttonPhoneStation == 1) {
+                // kzmbPositionClassName = 'kzmbRightCenter'
+                floatBtnTop = (winH - divW) / 2
+                floatBtnLeft = (winW - divW) - buttonPhoneDistance
+                console.log('floatBtnTop=' + floatBtnTop + ",floatBtnLeft=" + floatBtnLeft)
+                $('.kzmbFloatBtn').css({
+                    right: buttonPhoneDistance + 'px'
+                })
+            }
+            if (buttonPhoneStation == 2) {
+                floatBtnTop = (winH - divH) - buttonPhoneMarginBottom
+                floatBtnLeft = (winW - divW) - buttonPhoneDistance
+                console.log('floatBtnTop=' + floatBtnTop + ",floatBtnLeft=" + floatBtnLeft)
+                // kzmbPositionClassName = 'kzmbRightBottom'
+                $('.kzmbFloatBtn').css({
+                    right: buttonPhoneDistance + 'px',
+                    bottom: buttonPhoneMarginBottom + 'px'
+                })
+            }
+            if (buttonPhoneStation == 3) {
+                // kzmbPositionClassName = 'kzmbLeftCenter'
+                floatBtnTop = (winH - divW) / 2
+                floatBtnLeft = buttonPhoneDistance
+                console.log('floatBtnTop=' + floatBtnTop + ",floatBtnLeft=" + floatBtnLeft)
+                $('.kzmbFloatBtn').css({
+                    left: buttonPhoneDistance + 'px'
+                })
+
+            }
+            if (buttonPhoneStation == 4) {
+                // kzmbPositionClassName = 'kzmbLeftBottom'
+                floatBtnTop = (winH - divW) - buttonPhoneMarginBottom
+                floatBtnLeft = buttonPhoneDistance
+                console.log('floatBtnTop=' + floatBtnTop + ",floatBtnLeft=" + floatBtnLeft)
+                $('.kzmbFloatBtn').css({
+                    left: buttonPhoneDistance + 'px',
+                    bottom: buttonPhoneMarginBottom + 'px'
+                })
+            }
+
+
+        },
+        bottomBtn: function () {
+            var btncontent = ''
+            var phoneBroadsideTypeJSON = JSON.parse(phoneBroadsideType)
+            var onlinetalk = '在线客服'
+            if (phoneBroadsideTypeJSON) {
+                for (var i = 0; i < phoneBroadsideTypeJSON.length; i++) {
+                    var item = phoneBroadsideTypeJSON[i]
+
+                    //    if(buttonPhoneShow == 0){
+                    //         item.defaultCopy = ''
+                    //         onlinetalk = ''
+                    //    }
+
+                    switch (item.type) {
+                        //   电话
+                        case 1:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="tel:' + item.buttonContent + '">' +
+                                '<img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></li>'
+                            break;
+                            //   微信
+                        case 2:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="weixin://:' + item.buttonContent + '">' +
+                                '<img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></li>'
+                            break;
+                            //   QQ
+                        case 3:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="tencent://message/?uin=' + item.buttonContent + '&Site=&Menu-=yes">' +
+                                '<img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></li>'
+                            break;
+                            //   阿里旺旺
+                        case 4:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="https://t.asczwa.com/taobao?backurl=' + item.buttonContent + '">' +
+                                '<img class="kuaizhiInitStyle" class="kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></li>'
+                            break;
+                            //   微信公众号
+                        case 5:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle">' +
+                                '<img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</li>'
+                            break;
+                            //   自定义按钮
+                        case 6:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle">' +
+                                '<img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</li>'
+                            break;
+                            //   链接
+                        case 7:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="' + item.linkUrl + '">' +
+                                '<img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></li>'
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            if (onlineType == 1) {
+                kzmbBtnImg = buttonPhoneOnlinePicUrl
+                kzmbBtnContent = buttonPhoneOnlineContent
+            } else {
+                kzmbBtnImg = buttonPhoneDisPicUrl
+                kzmbBtnContent = buttonPhoneDisContent
+            }
+
+
+            var btn =
+                '<section style="display:none" class="kuaizhiInitStyle kzmbBottomBtn kzmbColor kzmbOpacity">' +
+                '<ul class="kuaizhiInitStyle">' +
+                '<li class="kuaizhiInitStyle" onclick="kuaizhiMobileChat()"><span class="kuaizhiInitStyle" id="kuaizhiNum"></span>' +
+                '<img class="kuaizhiInitStyle kzmbImg" src="' + kzmbBtnImg + '" alt="">' + onlinetalk +
+                '</li>' +
+                btncontent +
+                '</ul>' +
+                '</section>'
+
+            $('body').append(btn)
+        },
+        sideBtn: function () {
+            var buttonPhoneStationClassName = ''
+            var buttonArrowClassName = ''
+
+
+            if (buttonPhoneStation == 2) {
+                buttonPhoneStationClassName = 'kzmbRight'
+                buttonArrowClassName = 'kzmbArrowRight'
+                kzmbPositionClassName = 'kzmbRightCenter'
+                kzmbHoverArrowClassName = 'kzmbkzmbHoverArrowRight'
+            }
+            if (buttonPhoneStation == 4) {
+                buttonPhoneStationClassName = 'kzmbLeft'
+                buttonArrowClassName = 'kzmbArrowLeft'
+                kzmbPositionClassName = 'kzmbLeftCenter'
+                kzmbHoverArrowClassName = 'kzmbkzmbHoverArrowLeft'
+            }
+
+            var btncontent = ''
+            // var btn = '[{"iconType":1,"icon":"https://customer-service-bucket.oss-cn-qingdao.aliyuncs.com/hly_setting/%E7%94%B5%E8%AF%9D/%E7%94%B5%E8%AF%9D%E5%9B%BE%E6%A0%871.png","aliUrl":"","buttonContent":"222","defaultCopy":"电话咨询","textType":0,"richtext":"","type":1,"picture":""},{"iconType":1,"icon":"https://customer-service-bucket.oss-cn-qingdao.aliyuncs.com/hly_setting/%E6%9C%8B%E5%8F%8B%E5%9C%88/%E6%9C%8B%E5%8F%8B%E5%9C%88%E5%9B%BE%E6%A0%871.png","aliUrl":"","buttonContent":"123","defaultCopy":"扫码关注","textType":0,"richtext":"","type":5}]'
+            var phoneBroadsideTypeJSON = JSON.parse(phoneBroadsideType)
+            if (phoneBroadsideTypeJSON) {
+                for (var i = 0; i < phoneBroadsideTypeJSON.length; i++) {
+                    var item = phoneBroadsideTypeJSON[i]
+                    // 鼠标悬浮效果
+                    var kzmbSideHover = ''
+                    if (item.buttonContent) {
+                        kzmbSideHover =
+                            '<article class="kuaizhiInitStyle kzmbSideHover ' + kzmbHoverArrowClassName + '">' +
+                            item.buttonContent +
+                            '<span class="kuaizhiInitStyle"></span>' +
+                            '</article>'
+                    }
+                    switch (item.type) {
+                        //   电话
+                        case 1:
+
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle kzmbColor">' +
+                                '<article class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="tel:' + item.buttonContent + '"><img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></article>' +
+                                kzmbSideHover + '</li>'
+                            break;
+                            //   微信
+                        case 2:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle kzmbColor">' +
+                                '<article class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="weixin://:' + item.buttonContent + '"><img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></article>' +
+                                kzmbSideHover + '</li>'
+                            break;
+                            //   QQ
+                        case 3:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle kzmbColor">' +
+                                '<article class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="tencent://message/?uin=' + item.buttonContent + '&Site=&Menu-=yes"><img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></article>' +
+                                kzmbSideHover + '</li>'
+                            break;
+                            //   阿里旺旺
+                        case 4:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle kzmbColor">' +
+                                '<article class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="https://t.asczwa.com/taobao?backurl=' + item.buttonContent + '"><img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></article>' +
+                                kzmbSideHover +
+                                '</li>'
+                            break;
+                            //   微信公众号
+                        case 5:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle kzmbColor">' +
+                                '<article class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="https://t.asczwa.com/taobao?backurl=' + item.buttonContent + '"><img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></article>' +
+                                kzmbSideHover +
+                                '</li>'
+                            break;
+                            //   自定义按钮
+                        case 6:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle kzmbColor">' +
+                                '<article class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="https://t.asczwa.com/taobao?backurl=' + item.buttonContent + '"><img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></article>' +
+                                kzmbSideHover +
+                                '</li>'
+                            break;
+                            //   链接
+                        case 7:
+                            btncontent +=
+                                '<li class="kuaizhiInitStyle kzmbColor">' +
+                                '<article class="kuaizhiInitStyle"><a class="kuaizhiInitStyle" href="https://' + item.buttonContent + '"><img class="kuaizhiInitStyle kzmbImg" src="' + item.icon + '" alt="">' +
+                                item.defaultCopy +
+                                '</a></article>' +
+                                kzmbSideHover +
+                                '</li>'
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            // 按钮位置 
+            var Arrow = ''
+            var FlipArrow = ''
+            if (buttonPcStation == 1) {
+                Arrow = '<img class="kuaizhiInitStyle kzmbArrow" src="https://www.' + DOMAINNAME + '/kuaizhiChat/images/right.png" alt="">'
+                FlipArrow = '<img class="kuaizhiInitStyle kzmbArrow" src="https://www.' + DOMAINNAME + '/kuaizhiChat/images/left.png" alt="">'
+            }
+            if (buttonPcStation == 3) {
+                Arrow = '<img class="kuaizhiInitStyle kzBottomBtnImg" src="https://www.' + DOMAINNAME + '/kuaizhiChat/images/left.png" alt="">'
+                FlipArrow = '<img class="kuaizhiInitStyle kzBottomBtnImg" src="https://www.' + DOMAINNAME + '/kuaizhiChat/images/right.png" alt="">'
+            }
+            var messageImg = ''
+            if (buttonPhoneCircle == 2) {
+                messageImg = buttonPhonePic
+            } else {
+                messageImg = kzmbBtnImg
+            }
+
+            var kzmbbtnContentHover = ''
+            if (kzmbBtnContent) {
+                kzmbbtnContentHover =
+                    '<article class="kuaizhiInitStyle kzmbSideHover ' + kzmbHoverArrowClassName + '">' +
+                    kzmbBtnContent +
+                    '<span class="kuaizhiInitStyle"></span>' +
+                    '</article>'
+            } else {
+                kzmbBtnContent = ''
+            }
+
+            var btn =
+                '<section class="kuaizhiInitStyle kzmbSideBtn kzmbPosition kzmbOpacity ' + kzmbPositionClassName + '">' +
+                '<ul class="kuaizhiInitStyle ' + buttonPhoneStationClassName + '">' +
+                btncontent +
+                '<li class="kuaizhiInitStyle kzmbColor" onclick="kuaizhiMobileChat()">' +
+                '<article class="kuaizhiInitStyle"><img class="kuaizhiInitStyle kzmbImg" src="' + messageImg + '" alt=""><span class="kuaizhiInitStyle" id="kuaizhiNum"></span>' +
+                '在线客服' +
+                '</article></li>' +
+                // '<li class="kzmbColor kzmbArrowHIDE">'+
+                //   Arrow+
+                // '</li>'+
+                '</ul>' +
+                // '<article class="kzmbColor kzmbArrowSHOW '+buttonArrowClassName+'">'+
+                //     kzmbBtnContent+
+                //     FlipArrow+
+                // '</article>'+
+                '</section>'
+
+            $('body').append(btn)
+            if (buttonPhoneStation == 2) {
+                $('.kzmbRight').css({
+                    right: 0
+                })
+                $('.kzmbRightCenter').css({
+                    right: 0
+                })
+            }
+            if (buttonPhoneStation == 4) {
+                $('.kzmbLeft').css({
+                    left: 0
+                })
+                $('.kzmbLeftCenter').css({
+                    left: 0
+                })
+            }
+            $('.kzmbLeftCenter').css({
+                bottom: 'unset'
+            })
+            $('.kzmbRightCenter').css({
+                bottom: 'unset'
+            })
+        }
+    }
+
+    window.kzmbBtnMove = function (e) {
+        var cont = e;
+        var contW = window.innerHeight * 0.09;
+        var contH = window.innerHeight * 0.09;
+        var startX, startY, sX, sY, moveX, moveY;
+        var winW = window.innerWidth;
+        var winH = window.innerHeight;
+        // var body=$("body");
+        cont.on({ //绑定事件
+            touchstart: function (e) {
+                startX = e.originalEvent.targetTouches[0].clientX; //获取点击点的X坐标    
+                startY = e.originalEvent.targetTouches[0].clientY; //获取点击点的Y坐标
+                console.log("startX=" + startX + " ------>  startY=" + startY);
+                sX = floatBtnLeft; //相对于当前窗口X轴的偏移量
+                sY = floatBtnTop; //相对于当前窗口Y轴的偏移量
+            },
+            touchmove: function (e) {
+                e.preventDefault();
+                moveX = e.originalEvent.targetTouches[0].clientX; //移动过程中X轴的坐标
+                moveY = e.originalEvent.targetTouches[0].clientY; //移动过程中Y轴的坐标
+                console.log("moveX=" + moveX.toFixed(0) + "=====moveY=" + moveY.toFixed(0));
+                var top = sY + moveY - startY
+                var left = sX + moveX - startX
+
+                if (top <= 0) {
+                    top = 0
+                }
+                if (top >= (winH - contH)) {
+                    top = winH - contH
+                }
+
+                if (left <= 0) {
+                    left = 0
+                }
+                if (left >= (winW - contW)) {
+                    left = winW - contW
+                }
+                floatBtnTop = top
+                floatBtnLeft = left
+                $(this).css({
+                    "left": left,
+                    "top": top,
+                    "right": "unset",
+                    "bottom": "unset"
+                })
+            },
+ 
+        })
+    }
+    // 副按钮铺设
+    var secondBtn = {
+        floatBtn: function () {
+            if (ViceButtonPcShow == 1 && vicekzHoverMsg) {
+                var styleValue = ''
+                var ClosekzHover = ''
+                if (ViceSecStatusTips == 2) {
+                    styleValue = 'display:block'
+                    // ClosekzHover = '<svg id="KZClosekzHover" t="1640855136392" class="kuaizhiInitStyle icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2621" width="32" height="32"><path d="M512 64c-247.00852 0-448 200.960516-448 448S264.960516 960 512 960c247.00852 0 448-200.960516 448-448S759.039484 64 512 64zM694.752211 649.984034c12.480043 12.54369 12.447359 32.768069-0.063647 45.248112-6.239161 6.208198-14.399785 9.34412-22.591372 9.34412-8.224271 0-16.415858-3.135923-22.65674-9.407768l-137.60043-138.016718-138.047682 136.576912c-6.239161 6.14455-14.368821 9.247789-22.496761 9.247789-8.255235 0-16.479505-3.168606-22.751351-9.504099-12.416396-12.576374-12.320065-32.800753 0.25631-45.248112l137.887703-136.384249-137.376804-137.824056c-12.480043-12.512727-12.447359-32.768069 0.063647-45.248112 12.512727-12.512727 32.735385-12.447359 45.248112 0.063647l137.567746 137.984034 138.047682-136.575192c12.54369-12.447359 32.831716-12.320065 45.248112 0.25631 12.447359 12.576374 12.320065 32.831716-0.25631 45.248112L557.344443 512.127295 694.752211 649.984034z" p-id="2622" fill="#8a8a8a"></path></svg>'
+                    // <svg t="1640855379761" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2864" width="200" height="200"><path d="M512 64c-247.00852 0-448 200.960516-448 448S264.960516 960 512 960c247.00852 0 448-200.960516 448-448S759.039484 64 512 64zM694.752211 649.984034c12.480043 12.54369 12.447359 32.768069-0.063647 45.248112-6.239161 6.208198-14.399785 9.34412-22.591372 9.34412-8.224271 0-16.415858-3.135923-22.65674-9.407768l-137.60043-138.016718-138.047682 136.576912c-6.239161 6.14455-14.368821 9.247789-22.496761 9.247789-8.255235 0-16.479505-3.168606-22.751351-9.504099-12.416396-12.576374-12.320065-32.800753 0.25631-45.248112l137.887703-136.384249-137.376804-137.824056c-12.480043-12.512727-12.447359-32.768069 0.063647-45.248112 12.512727-12.512727 32.735385-12.447359 45.248112 0.063647l137.567746 137.984034 138.047682-136.575192c12.54369-12.447359 32.831716-12.320065 45.248112 0.25631 12.447359 12.576374 12.320065 32.831716-0.25631 45.248112L557.344443 512.127295 694.752211 649.984034z" p-id="2865" fill="#ffffff"></path></svg>
+                    ClosekzHover = '<a id="KZClosekzHover"><svg t="1640918839975" class="kuaizhiInitStyle icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2476" width="32" height="32"><path d="M453.44 512L161.472 220.032a41.408 41.408 0 0 1 58.56-58.56L512 453.44 803.968 161.472a41.408 41.408 0 0 1 58.56 58.56L570.56 512l291.968 291.968a41.408 41.408 0 0 1-58.56 58.56L512 570.56 220.032 862.528a41.408 41.408 0 0 1-58.56-58.56L453.44 512z" fill="#ffffff" p-id="2477"></path></svg></a>'
+                }
+                vicekzHover =
+                    '<article id="kzHoverMessage" style="' + styleValue + '" class="kuaizhiInitStyle kzHover ' + vicekzHoverArrowClassName + '">' +
+                    '<div class="kuaizhiInitStyle kzHoverMessageMB"></div>' +
+                    '<a class="kuaizhiInitStyle" id="KZHoverShowMsg">' + vicekzHoverMsg + '</a>' +
+                    ClosekzHover +
+                    '<span></span>' +
+                    '</article>'
+            }
+            // 动画效果
+            if (ViceButtonPcEffect == 1) {
+                vicebuttonPcEffectTag = '<article class="kuaizhiInitStyle kzAnimate vicekzColor vicekzBorderRadius"></article>'
+            }
+            // 自定义按钮设置
+            if (ViceButtonPcCircle == 2) {
+                vicekzBtnImg = ViceButtonPcPic
+            }
+
+            var btn =
+                '<section class="kuaizhiInitStyle kzVicetBtn kzFloatBtn vicekzOpacity kzPosition ' + vicebuttonPcStationClassName + '" style="display:none;' + vicebuttonPcDistanceStyleValue + ';' + vicebuttonPcMarginBottomStyleValue + '">' +
+                vicebuttonPcEffectTag +
+                '<article onclick="kuaizhichat()" class="kuaizhiInitStyle kzBtnContent vicekzColor vicekzBorderRadius ">' +
+                '<img class="kuaizhiInitStyle kzBtnContentImg" src="' + vicekzBtnImg + '" alt="">' +
+                '</article>' +
+                vicekzHover +
+                '</section>'
+
+            $('body').append(btn)
+        },
+        bottomBtn: function () {
+
+            if (ViceButtonPcShow == 1 && vicekzHoverMsg) {
+                var styleValue = ''
+                var ClosekzHover = ''
+                if (ViceSecStatusTips == 2) {
+                    styleValue = 'display:block'
+                    ClosekzHover = '<a id="KZClosekzHover"><svg t="1640918839975" class="kuaizhiInitStyle icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2476" width="32" height="32"><path d="M453.44 512L161.472 220.032a41.408 41.408 0 0 1 58.56-58.56L512 453.44 803.968 161.472a41.408 41.408 0 0 1 58.56 58.56L570.56 512l291.968 291.968a41.408 41.408 0 0 1-58.56 58.56L512 570.56 220.032 862.528a41.408 41.408 0 0 1-58.56-58.56L453.44 512z" fill="#ffffff" p-id="2477"></path></svg></a>'
+                }
+                vicekzHover =
+                    '<article id="kzHoverMessage" style="' + styleValue + '" class="kuaizhiInitStyle kzBottomHover ' + vicekzHoverArrowClassName + '">' +
+                    '<div class="kuaizhiInitStyle kzHoverMessageMB"></div>' +
+                    '<a class="kuaizhiInitStyle" id="KZHoverShowMsg">' + vicekzHoverMsg + '</a>' +
+                    ClosekzHover +
+                    '<span class="kuaizhiInitStyle"></span>' +
+                    '</article>'
+            }
+            // 按钮名称
+            if (ViceButtonPcIconContent) {
+                ViceButtonPcIconContent = '<p class="kuaizhiInitStyle" style="padding-right:10px">' + ViceButtonPcIconContent + '</p>'
+            } else {
+                ViceButtonPcIconContent = ''
+            }
+
+            var btn =
+                '<section class="kuaizhiInitStyle kzVicetBtn kzBottomBtn kzPosition vicekzOpacity ' + vicebuttonPcStationClassName + '" style="display:none;top:unset;' + vicebuttonPcDistanceStyleValue + ';' + vicebuttonPcMarginBottomStyleValue + '">' +
+                '<article onclick="kuaizhichat()" class="kuaizhiInitStyle kzBottomBtnContent vicekzColor vicekzBorderRadius">' +
+                '<img class="kuaizhiInitStyle kzBottomBtnImg" src="' + vicekzBtnImg + '" alt="">' +
+                ViceButtonPcIconContent +
+                '</article>' +
+                vicekzHover +
+                '</section>'
+            $('body').append(btn)
+        }
+    }
+
+    // 副按钮配置
+    window.viceBtnSHOW = function () {
+        // 从在线状态判断  图片以及鼠标悬浮内容
+        if (onlineType == 1) {
+            vicekzBtnImg = ViceButtonPcOnlinePic
+            vicekzHoverMsg = ViceButtonPcOnlionContent
+        } else {
+            vicekzBtnImg = ViceButtonPcDisPic
+            vicekzHoverMsg = ViceButtonPcDisContent
+        }
+
+
+        // 从定位来判断 位置的class信息
+        // 右侧居中
+        if (ViceButtonPcStation == 1) {
+            vicebuttonPcStationClassName = 'kzRightCenter'
+            vicekzHoverArrowClassName = 'kzHoverArrowLeft'
+            vicebuttonPcDistanceStyleValue = 'right:' + ViceButtonPcDistance + 'px'
+        }
+        // 右侧居下
+        if (ViceButtonPcStation == 2) {
+            vicebuttonPcStationClassName = 'kzRightBottom'
+            vicekzHoverArrowClassName = 'kzHoverArrowLeft'
+            vicebuttonPcDistanceStyleValue = 'right:' + ViceButtonPcDistance + 'px'
+            vicebuttonPcMarginBottomStyleValue = 'bottom:' + ViceButtonPcMarginBottom + 'px'
+
+        }
+        // 左侧居中
+        if (ViceButtonPcStation == 3) {
+            vicebuttonPcStationClassName = 'kzLeftCenter'
+            vicekzHoverArrowClassName = 'kzHoverArrowRight'
+            vicebuttonPcDistanceStyleValue = 'left:' + ViceButtonPcDistance + 'px'
+
+        }
+        // 左侧居下
+        if (ViceButtonPcStation == 4) {
+            vicebuttonPcStationClassName = 'kzLeftBottom'
+            vicekzHoverArrowClassName = 'kzHoverArrowRight'
+            vicebuttonPcDistanceStyleValue = 'left:' + ViceButtonPcDistance + 'px'
+            vicebuttonPcMarginBottomStyleValue = 'bottom:' + ViceButtonPcMarginBottom + 'px'
+        }
+        switch (ViceButtonPcId) {
+            case 1:
+                secondBtn.floatBtn()
+                break;
+            case 2:
+                secondBtn.bottomBtn()
+                break;
+        }
+        // 设置按钮透明度
+        setTimeout(function () {
+            $('.vicekzOpacity').css({
+                opacity: 1 - (VicePcTransparency / 100),
+                display: 'block'
+            })
+        }, 200)
+
+        // 设置按钮主题颜色
+        $('.vicekzColor').css({
+            background: '#' + ViceButtonPcColor
+        })
+        $('.vicekzBorderRadius').css({
+            borderRadius: VicePcFillet + 'px'
+        })
+
+    }
+
+    // PC端按钮显示
+    window.PCchatBtn = function () {
+        // 从在线状态判断  图片以及鼠标悬浮内容
+        if (onlineType == 1) {
+            kzBtnImg = buttonPcOnlinePicUrl
+            kzHoverMsg = buttonPcOnlionContent
+        } else {
+            kzBtnImg = buttonPcDisPicUrl
+            kzHoverMsg = buttonPcDisContent
+        }
+
+        if (buttonPcId == 3) {
+            switch (buttonPcStation) {
+                case 1:
+                    buttonPcStation = 1
+                    break;
+                case 2:
+                    buttonPcStation = 3
+                    break;
+            }
+        }
+
+        // 从定位来判断 位置的class信息
+        // 右侧居中
+        if (buttonPcStation == 1) {
+            buttonPcStationClassName = 'kzRightCenter'
+            kzHoverArrowClassName = 'kzHoverArrowLeft'
+            buttonPcDistanceStyleValue = 'right:' + buttonPcDistance + 'px'
+
+            kzSideBtnPositionClassName = 'kzSideBtnRightCenter'
+            kzSideBtnPositionUlClassName = 'kzSidePositionRight'
+            kzSideBtnMsgClassName = 'kzSideBtnMsgRight'
+        }
+        // 右侧居下
+        if (buttonPcStation == 2) {
+            buttonPcStationClassName = 'kzRightBottom'
+            kzHoverArrowClassName = 'kzHoverArrowLeft'
+            buttonPcDistanceStyleValue = 'right:' + buttonPcDistance + 'px'
+            buttonPcMarginBottomStyleValue = 'bottom:' + buttonPcMarginBottom + 'px'
+
+            kzSideBtnPositionClassName = 'kzSideBtnRightCenter'
+            kzSideBtnPositionUlClassName = 'kzSidePositionRight'
+            kzSideBtnMsgClassName = 'kzSideBtnMsgRight'
+        }
+        // 左侧居中
+        if (buttonPcStation == 3) {
+            buttonPcStationClassName = 'kzLeftCenter'
+            kzHoverArrowClassName = 'kzHoverArrowRight'
+            buttonPcDistanceStyleValue = 'left:' + buttonPcDistance + 'px'
+
+            kzSideBtnPositionClassName = 'kzSideBtnLeftCenter'
+            kzSideBtnPositionUlClassName = 'kzSidePositionLeft'
+            kzSideBtnMsgClassName = 'kzSideBtnMsgLeft'
+        }
+        // 左侧居下
+        if (buttonPcStation == 4) {
+            buttonPcStationClassName = 'kzLeftBottom'
+            kzHoverArrowClassName = 'kzHoverArrowRight'
+            buttonPcDistanceStyleValue = 'left:' + buttonPcDistance + 'px'
+            buttonPcMarginBottomStyleValue = 'bottom:' + buttonPcMarginBottom + 'px'
+
+            kzSideBtnPositionClassName = 'kzSideBtnLeftCenter'
+            kzSideBtnPositionUlClassName = 'kzSidePositionLeft'
+            kzSideBtnMsgClassName = 'kzSideBtnMsgLeft'
+        }
+
+
+        switch (buttonPcId) {
+            case 1:
+                PCBtn.floatBtn()
+                break;
+            case 2:
+                PCBtn.bottomBtn()
+                break;
+            case 3:
+                PCBtn.sideBtn()
+                if (buttonPcSecondary == 1) {
+                    viceBtnSHOW()
+                }
+                switch (buttonPcStation) {
+                    case 1:
+                        $('.kzSideBtnMsg').css({
+                            borderRadius: '10px 0 0 10px'
+                        })
+                        break;
+                    case 3:
+                        $('.kzSideBtnMsg').css({
+                            borderRadius: '0 10px 10px 0'
+                        })
+                        break;
+                }
+
+
+                break;
+            default:
+                break;
+        }
+
+
+        // 设置按钮主题颜色
+        $('.kzColor').css({
+            background: '#' + buttonPcColor
+        })
+        // 设置按钮圆角度
+        if (buttonPcId == 3 && pcBlockSpacing == 0 && $('.kzSideBtnContent li').length > 1) {
+            $('.kzSideBtnContent li:first-child .kzBorderRadius').css({
+                borderRadius: pcFillet + 'px ' + pcFillet + 'px 0 0'
+            })
+            $('.kzSideBtnContent li:last-child .kzBorderRadius').css({
+                borderRadius: '0 0 ' + pcFillet + 'px ' + pcFillet + 'px'
+            })
+
+
+        } else {
+            $('.kzBorderRadius').css({
+                borderRadius: pcFillet + 'px'
+            })
+            $('.kzSideBtnContent li .kzIcon::after').hide()
+        }
+
+        // 设置按钮透明度
+        setTimeout(function () {
+            $('.kzOpacity').css({
+                opacity: 1 - (pcTransparency / 100),
+                display: 'block'
+            })
+        }, 200)
+
+        // 侧边按钮的小菜单间距
+        $(".kzSideBtnContent li").css({
+            marginBottom: pcBlockSpacing + 'px'
+        })
+
+
+        if (pcBroadsideControl == 1 && buttonPcStatus == 1) {
+            $('.showkzSideBtnContent').click()
+        }
+
+        // 焦点色
+        $('.kzSideBtnContent .kzColor').hover(
+            function () {
+                $(this).css({
+                    background: '#' + pcFrontColor
+                })
+            },
+            function () {
+                $(this).css({
+                    background: '#' + buttonPcColor
+                })
+            }
+        )
+        $('.kzSideBtn').css({
+            margin: '0 ' + buttonPcDistance + 'px'
+        })
+
+
+
+
+
+    }
+    // 手机端样式设置
+    window.MbchatBtn = function () {
+        if (buttonPhoneStation == 1) {
+            kzmbPositionClassName = 'kzmbRightCenter'
+            kzmbHoverArrowClassName = 'kzmbkzmbHoverArrowRight'
+        }
+        if (buttonPhoneStation == 2) {
+            kzmbPositionClassName = 'kzmbRightBottom'
+            kzmbHoverArrowClassName = 'kzmbkzmbHoverArrowRight'
+        }
+        if (buttonPhoneStation == 3) {
+            kzmbPositionClassName = 'kzmbLeftCenter'
+            kzmbHoverArrowClassName = 'kzmbkzmbHoverArrowLeft'
+        }
+        if (buttonPhoneStation == 4) {
+            kzmbPositionClassName = 'kzmbLeftBottom'
+            kzmbHoverArrowClassName = 'kzmbkzmbHoverArrowLeft'
+        }
+        // kzmbPositionClassName = 'kzmbRightCenter'
+        // kzmbHoverArrowClassName = 'kzmbkzmbHoverArrowRight'
+
+        if (onlineType == 1) {
+            kzmbBtnImg = buttonPhoneOnlinePicUrl
+            kzmbBtnContent = buttonPhoneOnlineContent
+        } else {
+            kzmbBtnImg = buttonPhoneDisPicUrl
+            kzmbBtnContent = buttonPhoneDisContent
+        }
+        if (buttonPhoneCircle == 2) {
+            kzmbBtnImg = buttonPhonePic
+        }
+
+
+
+        switch (buttonPhoneId) {
+            case 1:
+                MBBtn.floatBtn()
+                break;
+            case 2:
+                MBBtn.bottomBtn()
+                break;
+            case 3:
+                MBBtn.sideBtn()
+                break;
+            case 4:
+                MBBtn.sideBtn()
+                break;
+            default:
+                break;
+        }
+        // MBBtn.sideBtn()
+        $('.kzmbOpacity').css({
+            opacity: 1 - (phoneTransparency / 100),
+            display: 'block'
+        })
+        $('.kzmbBorderRadius').css({
+            borderRadius: phoneFillet + 'px'
+        })
+        $('.kzmbColor').css({
+            background: '#' + buttonPhoneColor
+        })
+
+    }
+    // 接值  以及处理值
+    window.styleBtnWindow = function (data) {
+        if (blacklistStatus) {
+            return
+        }
+        //  对接的PC端窗口样式以及设置值
+        winPcStyle = data.winPcStyle
+        winPcColor = data.winPcColor.replace('#', '')
+        winPcStation = data.winPcStation
+        winPcSideMargin = data.winPcSideMargin
+        winPcBottomMargin = data.winPcBottomMargin
+        pcFontSize = data.pcFontSize
+        pcFontColor = data.pcFontColor.replace('#', '')
+        winPcFillet = data.winPcFillet
+        pcIsIndividualWindows = data.pcIsIndividualWindows
+        pcFrameEffect = data.pcFrameEffect
+        winPcHeight = data.winPcHeight
+        winPcWidth = data.winPcWidth
+
+
+
+        if (winPcStyle == 2) {
+            if (winPcWidth >= window.innerWidth) {
+                winPcWidth = window.innerWidth
+            } else if (winPcWidth <= 720) {
+                winPcWidth = 720
+            }
+
+            if (winPcHeight >= window.innerHeight) {
+                winPcHeight = window.innerHeight
+            } else if (winPcHeight <= 600) {
+                winPcHeight = 600
+            }
+        }
+        if (winPcStyle == 1) {
+            if (winPcWidth >= window.innerWidth) {
+                winPcWidth = window.innerWidth
+            } else if (winPcWidth <= 340) {
+                winPcWidth = 340
+            }
+
+            if (winPcHeight >= window.innerHeight) {
+                winPcHeight = window.innerHeight
+            } else if (winPcHeight <= 580) {
+                winPcHeight = 580
+            }
+        }
+
+
+        winPcFull = data.winPcFull
+
+        // 对接手机端窗口样式设置值
+        winPhoneStyle = data.winPhoneStyle
+        winPhoneColor = data.winPhoneColor.replace('#', '')
+        phoneFontSize = data.phoneFontSize
+        phoneFontColor = data.phoneFontColor.replace('#', '')
+
+        // PC端按钮
+        buttonPcId = data.buttonPcId
+        buttonPcColor = data.buttonPcColor.replace('#', '')
+
+
+        buttonPcMarginTop = data.buttonPcMarginTop * 1
+        buttonPcShow = data.buttonPcShow
+        buttonPcShowstatusTips = data.statusTips
+        dialogpReviewState = data.dialogpReviewState
+
+        buttonPcOnlinePicUrl = data.buttonPcOnlinePicUrl
+        buttonPcOnlionContent = data.buttonPcOnlionContent
+        buttonPcDisPicUrl = data.buttonPcDisUrl
+        buttonPcDisContent = data.buttonPcDisContent
+        buttonPcStation = data.buttonPcStation
+        buttonPcDistance = data.buttonPcDistance
+        buttonPcMarginBottom = data.buttonPcMarginBottom
+        buttonPcStatus = data.buttonPcStatus
+        pcBroadsideType = data.pcBroadsideType
+        pcDefalueMessage = data.pcDefalueMessage
+        pcBroadsideControl = data.pcBroadsideControl
+        pcFillet = data.pcFillet
+        pcTransparency = data.pcTransparency
+        pcIsMoved = data.pcIsMoved
+        pcFrontColor = data.pcFrontColor.replace('#', '')
+        pcStowingMode = data.pcStowingMode
+        pcBlockSpacing = data.pcBlockSpacing
+        buttonPcIconName = data.buttonPcIconName
+
+        buttonPcIconContent = data.buttonPcIconContent
+        buttonPcSecondary = data.buttonPcSecondary
+        buttonPcEffect = data.buttonPcEffect
+        buttonPcCircle = data.buttonPcCircle
+        buttonPcPic = data.buttonPcPic
+        secondaryButton = data.secondaryButton
+
+        // 副按钮字段
+        if (buttonPcSecondary == 1) {
+            ViceButtonPcId = data.secondaryButton.buttonPcId
+            ViceButtonPcColor = data.secondaryButton.buttonPcColor.replace('#', '')
+            ViceButtonPcShow = data.secondaryButton.buttonPcShow
+            ViceButtonPcOnlinePic = data.secondaryButton.pcOnlineUrl
+            ViceButtonPcOnlionContent = data.secondaryButton.buttonPcOnlionContent
+            ViceButtonPcIconContent = data.secondaryButton.buttonPcIconContent
+            ViceButtonPcDisPic = data.secondaryButton.pcDisUrl
+            ViceButtonPcDisContent = data.secondaryButton.buttonPcDisContent
+            ViceButtonPcStation = data.secondaryButton.buttonPcStation
+            ViceButtonPcDistance = data.secondaryButton.buttonPcDistance
+            ViceButtonPcMarginBottom = data.secondaryButton.buttonPcMarginBottom
+            VicePcFillet = data.secondaryButton.pcFillet
+            VicePcTransparency = data.secondaryButton.pcTransparency
+            ViceButtonPcEffect = data.secondaryButton.buttonPcEffect
+            ViceButtonPcCircle = data.secondaryButton.buttonPcCircle
+            ViceButtonPcPic = data.secondaryButton.buttonPcPic
+            ViceSecDialogpReviewState = data.secondaryButton.secDialogpReviewState
+            ViceSecStatusTips = data.secondaryButton.secStatusTips
+        }
+
+        // 手机端按钮
+        buttonPhoneId = data.tdStylePhoneIm.buttonPhoneId
+        buttonPhoneColor = data.tdStylePhoneIm.buttonPhoneColor.replace('#', '')
+
+
+        buttonPhoneStation = data.tdStylePhoneIm.buttonPhoneStation
+        phoneFillet = data.tdStylePhoneIm.phoneFillet
+        phoneTransparency = data.tdStylePhoneIm.phoneTransparency
+        phoneIsMoved = data.tdStylePhoneIm.phoneIsMoved
+        buttonPhoneDistance = data.tdStylePhoneIm.buttonPhoneDistance
+        buttonPhoneOnlinePicUrl = data.tdStylePhoneIm.phoneOnlineUrl
+        buttonPhoneOnlineContent = data.tdStylePhoneIm.buttonPhoneOnlineContent
+        buttonPhoneDisPicUrl = data.tdStylePhoneIm.phoneDisUrl
+        buttonPhoneDisContent = data.tdStylePhoneIm.buttonPhoneDisContent
+        phoneFrontColor = data.tdStylePhoneIm.phoneFrontColor.replace('#', '')
+        phoneStowingMode = data.tdStylePhoneIm.phoneStowingMode
+        phoneBlockSpacing = data.tdStylePhoneIm.phoneBlockSpacing
+        buttonPhoneStatus = data.tdStylePhoneIm.buttonPhoneStatus
+        phoneBroadsideType = data.tdStylePhoneIm.phoneBroadsideType
+        buttonPhoneShow = data.tdStylePhoneIm.buttonPhoneShow
+        buttonPhoneCircle = data.tdStylePhoneIm.buttonPhoneCircle
+        buttonPhonePic = data.tdStylePhoneIm.buttonPhonePic
+        buttonPhoneMarginBottom = data.tdStylePhoneIm.buttonPhoneMarginBottom
+        imgFillet = data.imgFillet
+        imgCover = data.imgCover
+
+
+
+
+
+        if (flag) {
+            var JQLink = document.createElement('link')
+            JQLink.href = hly + 'css/style.css'
+            JQLink.rel = 'stylesheet'
+            JQLink.type = 'text/css'
+            document.head.appendChild(JQLink)
+            // PC端按钮配置
+            PCchatBtn()
+
+        } else {
+            var JQLink = document.createElement('link')
+            JQLink.href = hly + 'css/style_mobile.css'
+            JQLink.rel = 'stylesheet'
+            JQLink.type = 'text/css'
+            document.head.appendChild(JQLink)
+            // 手机端按钮配置
+            MbchatBtn()
+        }
+
+        $('.mbKuaizhiShowMsgBox2,.mbKuaizhiBigBox').css({
+            borderColor: '#' + winPhoneColor
+        })
+        $('#kuaizhiShowAlertMsg').css({
+            background: '#' + winPcColor
+        })
+
+
+    }
+
+
+    /**
+     * @description 通过判断是否是pc端还是手机端
+     */
+
+
+    // var leaveStatus = false
+    // PC 端控制iframe 出现和隐藏
+    window.kuaizhichat = function () {
+        messageNum = 0
+        $("#kuaizhiNum").hide()
+        localStorage.setItem('kuaizhiNum', 0)
+
+        if (pcIsIndividualWindows == 1) {
+            var W = window.screen.width
+            var H = window.screen.height
+            var h = H / 2 - 800 / 2
+            var w = W / 2 - 600 / 2
+            window.open('https://www.' + DOMAINNAME + '/hly/chat/' + rand + '/' + styleId, '火烈云客服', 'directories=no,height=600px,width=750px,location=no,resizable=no,top=' + h + 'px,left=' + w + 'px')
+            return
+        }
+        if ($('#kuaizhi_move_box').length == 0) {
+            PCopenWindow(1)
+            clearInterval(timeControl)
+            clearTimeout(windowSettimeout)
+        }
+
+        var display = $('.kz_chat').css('display');
+        if (display == 'block') {
+            console.log('关闭中')
+            var iframecontent = document.getElementById('kuaizhi_iframe')
+            iframecontent.contentWindow.postMessage({
+                msg: false,
+                num: 1001
+            }, '*');
+        } else {
+            hidekuaizhiShowAlertMsg()
+            console.log('开启中')
+            var iframecontent = document.getElementById('kuaizhi_iframe')
+            iframecontent.contentWindow.postMessage({
+                msg: true,
+                num: 1001
+            }, '*');
+        }
+
+        var timenum = 400
+        switch (pcFrameEffect) {
+            case 0:
+                if (display == 'none') {
+                    $(".kz_chat").show().css({
+                        opacity: 1
+                    })
+                } else {
+                    $(".kz_chat").hide().css({
+                        opacity: 0
+                    })
+                }
+                break;
+            case 1:
+                if (display == 'none') {
+                    $(".kz_chat").show().css({
+                        top: windowtop + 50 + 'px'
+                    }).animate({
+                        opacity: 1,
+                        top: windowtop + 'px'
+                    }, timenum)
+
+                } else {
+                    $(".kz_chat").css({
+                        top: windowtop + 'px'
+                    }).animate({
+                        opacity: 0,
+                        top: windowtop + 50 + 'px'
+                    }, timenum, function () {
+                        $(this).hide()
+                    })
+
+                }
+                break;
+            case 2:
+                if (display == 'none') {
+                    $(".kz_chat").show().css({
+                        left: windowleft * 1 + 50 + "px"
+                    }).animate({
+                        opacity: 1,
+                        left: windowleft + 'px'
+                    }, timenum)
+
+                } else {
+                    $(".kz_chat").css({
+                        left: windowleft + 'px'
+                    }).animate({
+                        opacity: 0,
+                        left: windowleft * 1 + 50 + "px"
+                    }, timenum, function () {
+                        $(this).hide()
+                    })
+
+                }
+                break;
+            case 3:
+                if (display == 'none') {
+                    $(".kz_chat").show().animate({
+                        opacity: 1
+                    })
+                    setTimeout(function () {
+                        $(".kz_chat").css({
+                            'transition': 'none'
+                        })
+                    }, timenum)
+
+                } else {
+                    $(".kz_chat").animate({
+                        opacity: 0
+                    }, timenum, function () {
+                        $(this).hide();
+                        setTimeout(function () {
+                            $(".kz_chat").css({
+                                'transition': 'none'
+                            })
+                        }, timenum)
+                    })
+
+                }
+                break;
+            default:
+                break;
+        }
+
+    }
+    // 移动端 端控制iframe 出现和隐藏
+    window.kuaizhiMobileChat = function () {
+        messageNum = 0
+        $("#kuaizhiNum").hide()
+        localStorage.setItem('kuaizhiNum', 0)
+        if ($('#kuaizhi_iframe').length == 0) {
+
+            mbopenWindow(1)
+            kuaizhiMobileChatShow()
+
+            $(".kuaizhi_mobile_chat").show()
+            $('body').css({
+                overflow: 'hidden'
+            })
+            clearInterval(timeControl)
+            clearTimeout(windowSettimeout)
+
+        } else {
+            var display = $('.kuaizhi_mobile_chat').css('display');
+            if (display == 'none') {
+                var iframecontent = document.getElementById('kuaizhi_iframe')
+                iframecontent.contentWindow.postMessage({
+                    msg: true,
+                    num: 1001
+                }, '*');
+                $(".kuaizhi_mobile_chat").show()
+                $('body').css({
+                    overflow: 'hidden'
+                })
+                closeMbKuaizhiShowAlertBox()
+            } else {
+                var iframecontent = document.getElementById('kuaizhi_iframe')
+                iframecontent.contentWindow.postMessage({
+                    msg: false,
+                    num: 1001
+                }, '*');
+                $(".kuaizhi_mobile_chat").hide()
+                $('body').css({
+                    overflow: 'auto'
+                })
+
+
+            }
+        }
+
+    }
+
+    // 强制对话的时候  执行的方法
+    window.kuaizhichatShow = function () {
+        messageNum = 0
+        $("#kuaizhiNum").hide()
+        localStorage.setItem('kuaizhiNum', 0)
+        var timenum = 400
+        hidekuaizhiShowAlertMsg()
+        clearInterval(timeControl)
+
+        var display = $('.kz_chat').css('display');
+        if (display == 'none') {
+            switch (pcFrameEffect) {
+                case 0:
+                    $(".kz_chat").show().css({
+                        opacity: 1
+                    })
+                    break;
+                case 1:
+                    $(".kz_chat").show().css({
+                        top: windowtop + 50 + 'px'
+                    }).animate({
+                        opacity: 1,
+                        top: windowtop + 'px'
+                    }, timenum)
+                    break;
+                case 2:
+                    $(".kz_chat").show().css({
+                        left: windowleft * 1 + 50 + "px"
+                    }).animate({
+                        opacity: 1,
+                        left: windowleft + 'px'
+                    }, timenum)
+
+                    break;
+                case 3:
+                    $(".kz_chat").hide().css({
+                        'transition': 'all 0.4s ease 0s'
+                    }).show().animate({
+                        opacity: 1
+                    }, timenum, function () {
+                        setTimeout(function () {
+                            $(".kz_chat").css({
+                                'transition': 'none'
+                            })
+                        }, timenum)
+
+                    })
+
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (document.getElementById('kuaizhi_iframe')) {
+            var iframecontent = document.getElementById('kuaizhi_iframe')
+            iframecontent.contentWindow.postMessage({
+                msg: true,
+                num: 1001
+            }, '*');
+        }
+
+
+    }
+
+
+    window.kuaizhichatShowforce = function () {
+        kuaizhichatShow()
+    }
+
+
+    // 强制对话的时候  手机端执行的方法
+    window.kuaizhiMobileChatShow = function () {
+        messageNum = 0
+        $("#kuaizhiNum").hide()
+        localStorage.setItem('kuaizhiNum', 0)
+        closeMbKuaizhiShowAlertBox()
+        clearInterval(timeControl)
+
+        // alert()
+        $('.kuaizhi_mobile_chat').show()
+        $('body').css({
+            overflow: 'hidden'
+        })
+        if (document.getElementById('kuaizhi_iframe')) {
+            var iframecontent = document.getElementById('kuaizhi_iframe')
+            iframecontent.contentWindow.postMessage({
+                msg: true,
+                num: 1001
+            }, '*');
+        }
+
+    }
+
+    if (flag) {
+        var playVioce = document.createElement('audio')
+        playVioce.src = ''
+        playVioce.autoplay = 'autoplay'
+        playVioce.muted = true
+        playVioce.id = 'kuaizhiVioce'
+        playVioce.style.display = 'none'
+    }
+
+    window.kuaizhi = function (event) {
+        switch (event.data.num) {
+            case 0:
+                var bigImgSrc = event.data.bigImg
+                var bigImg = document.createElement('div')
+                bigImg.className = 'kuaizhiBigImg'
+                $(bigImg).append('<img class="kuaizhiInitStyle closeBigImg" src="https://www.' + DOMAINNAME + '/kuaizhiChat/img/closebigImg.png"><img class="kuaizhishowBigImg" src=' + bigImgSrc + '>')
+                $(bigImg).css({
+                    background: 'rgba(0,0,0,0.7)',
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    zIndex: 10000000000000,
+                    width: "100%",
+                    height: '100%'
+                })
+                $("body").append(bigImg)
+                $(document).on('click', '.kuaizhiBigImg', function (e) {
+                    e.stopPropagation(); //阻止冒泡事件
+                    $(this).remove()
+                })
+                break;
+            case 1:
+                kuaizhichat()
+                break;
+            case 2:
+                kuaizhichatShow()
+                break;
+            case 3:
+                kuaizhiMobileChat()
+                break;
+            case 4:
+                // 打开对话框
+                // console.log(`打开对话框`)
+                kuaizhiMobileChatShow()
+                break;
+            case 11:
+
+
+                break;
+            case 12:
+                // $(document).find("#kuaizhi_move_box").hide()
+                break;
+            case 13:
+                window.open('https://www.' + DOMAINNAME, '_blank');
+                break;
+            case 14:
+                var playVideoUrl = event.data.playVideo
+                var playVideo = document.createElement('div')
+                playVideo.className = 'kzbigVideo'
+                $(playVideo).append('<img class="kuaizhiInitStyle closeBigImg" src="https://www.' + DOMAINNAME + '/kuaizhiChat/img/closebigImg.png"><video autoplay controls="controls" class="kuaizhiInitStyle bigVideo" src=' + playVideoUrl + '></video>')
+                $(playVideo).css({
+                    background: 'rgba(0,0,0,0.3)',
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    zIndex: 10000000000,
+                    width: "100%",
+                    height: '100%'
+                })
+                $("body").append(playVideo)
+                $(document).on('click', '.closeBigImg', function (e) {
+                    e.stopPropagation(); //阻止冒泡事件
+                    $(this).parent().remove()
+                })
+                break;
+            case 15:
+                break;
+            case 16:
+
+                break;
+            case 17:
+
+                break
+            case 18:
+
+                if (flag == true) {
+                    $(document).find('.kz_chat').show()
+                } else {
+                    $(document).find('.kuaizhi_mobile_chat').show()
+                }
+
+                break;
+            case 20:
+                console.log("穿过来的值", event)
+
+                if (voiceStatus == 1 && flag && !(event.data.data.zhudong == false)) {
+                    try {
+                        if (event.data.data.voiceOnce) {
+                            voiceStatus = 0
+                        }
+                        playVioce.muted = false
+                        playVioce.play()
+                    } catch (e) {
+                        console.log(e)
+                    }
+                }
+                if (ViceSecDialogpReviewState && ViceSecStatusTips == 2) {
+                    $(document).find('#KZHoverShowMsg').text(fileType(event.data.data.fileType, event.data.data.Message).replace(/<\/?.+?>/g, "")).parent().show()
+                }
+                if (dialogpReviewState && buttonPcShowstatusTips == 2) {
+                    $(document).find('#KZHoverShowMsg').text(fileType(event.data.data.fileType, event.data.data.Message).replace(/<\/?.+?>/g, "")).parent().show()
+                }
+                messageNum = localStorage.getItem('kuaizhiNum') * 1
+                if (messageNum == null) {
+                    messageNum = 0
+                }
+                messageNum = messageNum + 1
+
+                if (flag) {
+                    if ($('#kuaizhi_move_box').css('display') == 'none') {
+
+                        if (showAlertMsgStatus) {
+                            $("#kuaizhiNum").show().text(messageNum);
+                            localStorage.setItem('kuaizhiNum', messageNum)
+                        } else {
+                            $('.kzPosition:not(.kzSideBtn)').hide()
+                            $('body').find('#kuaizhiShowAlertMsg').css({
+                                opacity: 1
+                            }).addClass('ShowAlertAnimated ShowAlertFadeInUp').show()
+                            $('body').find('#kuaizhiShowImg').attr('src', event.data.data.headImg)
+                            $('body').find('.kuaizhiNAME span:nth-child(1)').text(event.data.data.talkName)
+                            if (messageNum > 9) {
+                                $('body').find('.kuaizhiNUM').text(9)
+                            } else {
+                                $('body').find('.kuaizhiNUM').text(messageNum)
+                            }
+                            $('body').find('#kuaizhiMSG').text(fileType(event.data.data.fileType, event.data.data.Message))
+                            localStorage.setItem('kuaizhiNum', messageNum)
+                        }
+                    } else {
+                        $("#kuaizhiNum").hide();
+                        localStorage.setItem('kuaizhiNum', 0)
+                    }
+                } else {
+                    if ($('.kuaizhi_mobile_chat').css('display') == 'none') {
+                        if (showAlertMsgStatus) {
+                            $("#kuaizhiNum").show().text(messageNum);
+                            localStorage.setItem('kuaizhiNum', messageNum)
+                        } else {
+                            $('.kzmbOpacity:not(.kzmbSideBtn)').hide()
+                            $('body').find('#mbKuaizhiHeadImg').attr('src', event.data.data.headImg)
+                            $('body').find('#mbKuaizhiName').text(event.data.data.talkName)
+                            $('body').find('#mbkuaizhiNum').text(messageNum)
+                            $('body').find('#mbKuaizhiMsg').text(fileType(event.data.data.fileType, event.data.data.Message))
+                            if (mbShowAlertType == 1) {
+                                $('#mbKuaizhiShowAlertBox').css({
+                                    opacity: 1
+                                }).addClass('ShowAlertAnimated ShowAlertFadeInDown').show()
+                            } else {
+                                $('#mbKuaizhiShowAlertBox2').css({
+                                    opacity: 1
+                                }).addClass('ShowAlertAnimated ShowAlertFadeInUp').css({
+                                    display: 'flex'
+                                })
+                            }
+                            localStorage.setItem('kuaizhiNum', messageNum)
+                        }
+
+                    } else {
+                        localStorage.setItem('kuaizhiNum', 0)
+                    }
+                }
+
+                break;
+            case 22:
+                // 响应了页面加载完成
+                $(document).find('.kuaizhi_load_mask').animate({
+                    opacity: 0
+                }, 160, function () {
+                    $(this).hide()
+                })
+                break;
+            case 23:
+                // if (showAlertMsgStatus) {
+                //     if (flag) {
+                //         kuaizhichatShow()
+                //     } else {
+                //         kuaizhiMobileChatShow()
+                //     }
+                // }
+                if (flag) {
+                    try {
+                        playVioce.muted = false
+                        playVioce.src = event.data.vioce
+                    } catch (e) {
+                        console.log(e)
+                    }
+                }
+                break;
+            case 24:
+                clearInterval(flashMsgTitle)
+                clearTimeout(flashMsgTitleSec)
+                clearTimeout(flashMsgTitleInit)
+                document.title = '【新消息】在线客服'
+                flashMsgTitle = setInterval(function () {
+                    document.title = '【　　　】在线客服'
+                    flashMsgTitleSec = setTimeout(function () {
+                        document.title = '【新消息】在线客服'
+                    }, 500)
+                }, 1000);
+                flashMsgTitleInit = setTimeout(function () {
+                    clearInterval(flashMsgTitle)
+                    clearTimeout(flashMsgTitleSec)
+                    clearTimeout(flashMsgTitleInit)
+                    document.title = initTitle
+                }, 5000)
+                break;
+            default:
+                break;
+        }
+    }
+    window.addEventListener("message", kuaizhi, false);
+
+    /**
+     * @method 轮训接口
+     * @description 根据机器人的状态和在线客服的状态来判断是否进行轮训
+     */
+    var timeNum = 0
+    var timeControl
+
+
+    // 函数循环push
+    window.kuaizhigPush = function () {
+        if (onlineType == 1) {
+            $.ajax({
+                type: 'post',
+                url: hlyurl + 'visitor/chatIM/push',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "companyRand": rand, //类型：String  必有字段  备注：公司rand
+                    "origin": window.location.href, //类型：String  必有字段  备注：页面连接
+                    "visitorId": fkID //类型：String  必有字段  备注：访客id
+                }),
+                success: function (data) {
+
+                },
+                error: function (err) {
+
+                }
+            })
+
+            $.ajax({
+                type: 'post',
+                url: hlyurl + 'visitor/chatIM/trainvisitor',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "companyRand": rand, //类型：String  必有字段  备注：公司rand
+                    "num": timeNum++,
+                    "visitorId": fkID //类型：String  必有字段  备注：访客id
+                }),
+                success: function (data) {
+                    if (data.status == 1) {
+                        if (data.data != null) {
+                            robotId = ''
+                            marketRobotId = ''
+                            kefuID = data.data
+                            if (flag == true) {
+                                PCopenWindow(3)
+                                kuaizhichatShow()
+                            } else {
+                                mbopenWindow(3)
+                                kuaizhiMobileChatShow()
+                            }
+
+                        }
+                    } else {
+                        console.error(data)
+                    }
+
+
+                },
+                error: function (err) {
+
+                }
+            })
+
+            timeControl = setInterval(function () {
+                $.ajax({
+                    type: 'post',
+                    url: hlyurl + 'visitor/chatIM/trainvisitor',
+                    dataType: 'json',
+                    async: false,
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        "companyRand": rand, //类型：String  必有字段  备注：公司rand
+                        "num": timeNum++,
+                        "visitorId": fkID //类型：String  必有字段  备注：访客id
+                    }),
+                    success: function (data) {
+                        if (data.status == 1) {
+                            if (data.data != null) {
+                                robotId = ''
+                                marketRobotId = ''
+                                kefuID = data.data
+                                if (flag == true) {
+                                    PCopenWindow(3)
+                                    kuaizhichatShow()
+                                } else {
+                                    mbopenWindow(3)
+                                    kuaizhiMobileChatShow()
+                                }
+                            }
+                        } else {
+                            console.error(data)
+                        }
+
+                    },
+                    error: function (err) {
+
+                    }
+                })
+                if (timeNum > 15) {
+                    clearInterval(timeControl)
+                }
+            }, 15000)
+        }
+    }
+
+
+    /**
+     * @method PC端的窗口呼出
+     * @description 根据方法向页面添加Iframe的PC端客服窗口
+     */
+    window.PCopenWindow = function (behavior) {
+        if (!isValid) {
+            return
+        }
+        if ($("#kuaizhi_move_box").length > 0) {
+            $("#kuaizhi_move_box").remove()
+        }
+        clearInterval(timeControl)
+        // 并且通过参数来进行 页面定位
+        var chatIfrema = document.createElement('iframe')
+        var chatbox = document.createElement('div')
+
+        chatbox.addClass = 'kuaizhi_move_box'
+        $(chatbox).attr("id", 'kuaizhi_move_box')
+        $(chatbox).css({
+            display: 'none'
+        })
+        $(chatbox).append('<div onmousedown="myDown(event)"  class="kuaizhiInitStyle kuaizhiMove"></div>')
+        $(chatbox).append('<div class="kuaizhiInitStyle kuaizhi_load_mask" style="border-radius:' + winPcFillet + 'px"><div class="kuaizhiInitStyle" style="background:#' + winPcColor + '"><img class="kuaizhiInitStyle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH4AAAB+CAYAAADiI6WIAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyhpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQwIDc5LjE2MDQ1MSwgMjAxNy8wNS8wNi0wMTowODoyMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTggKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6ODZBRTYyRTk1QUVDMTFFQ0JFMEFDNzhERkJGMzE4NzUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6ODZBRTYyRUE1QUVDMTFFQ0JFMEFDNzhERkJGMzE4NzUiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4NkFFNjJFNzVBRUMxMUVDQkUwQUM3OERGQkYzMTg3NSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4NkFFNjJFODVBRUMxMUVDQkUwQUM3OERGQkYzMTg3NSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ph5fCrAAAANSSURBVHja7J29axRBGId39RT8AEWboCKCgo0oBMGPKKZRgu0JktLCwv9JUEihEIKNCGqRiBEVbBQbien0OkXBz5iw/sYd3VXOkPV2zbszzwM/9qrcvPPczO7M3W7SLMsSiI81dAHiAfGAeEA8IB4QD4gHxAPiAfGAeEA8IB4QD4gHxAPiAfGAeEA8IB4QD4hHPCAeEA+IB8QD4gHxgHhAPCB+GdI0/S2io5xXJpXXyqKStSSLvs2TvoZOn/pWv88tPAql3BlqzzEdrij7AxlcL5QLqvFhqUbEl8WrLV0drinrAptZvynjqnMK8X+I9yP9XoDSy/JPuZGP+AJ3Tn8e0PS+3LR/wF8HcHEnuhFIT3yNXa7qC85FtJIyUauVqd4tf3ZEIr6n7ER8jjvnrY1E/JK/pkF8km98xMSq7+KwZRspiEc8IB4QD2HSaWGb3QrgmfLOSHu2KgctXKmHLP6zciZN01lTn8QsO6HDHWUDU30zTFiT/mNRnrdpgnN8c3yhbTV9WFu2c/dWOaIR9tLYVL9Ph8fKtpX2O+KriXd8VO4q741436KcVjZV6XfEVxcfAuzVA+IB8YB4QDwgHiIT/0Y5q6xPayLJf+R5NTbxbVvHX5Sry7W/eZa5L6vmlD2s420y14iFNHW/8p1nqrfLeCPTTZa5kX6cqd7uVO+4odxWvtb03ruVS8rQ/+x3xFcXH8SAY6oHxAPiAfGAeEA8IB5aLH4hoj5fQHxBLyLxPcQXTEckfhrxBdcjEm+iVit79W7v+r4yErj0B8rJxMB3E5YeabpXL58k+W3HIeJu6z6sWuct9LmZ5ZzrEB3GkvznVaHhahrzNbKc6yPf3Xg4rNwMSLqrZdjXZqevrT2v/idq16Ekf+7rUWWXsrHCn9yubK6peR8qzkKflFfKI2VKtT3tUxvi/yZ+EPxtyzPJ4I8OdY9aHa37tmzO8c19kJyoUS/OlHTO8bblBy09aPEDyA9eevDi/0F+FNKjEF9BfjTSoxG/AvlRSY9KfEm++z7gVpL/w4Al/3okJulm1vHAiAfEA+IB8YB4QDwgHhAPiAfEA+IRD4gHxAPiAfGAeEA8IB4QD4gHxAPiAfGAeEA8IB4QD4gHxAPiAfGAePjFdwEGAJZuCWwyG4tqAAAAAElFTkSuQmCC" alt=""></div></div>')
+        if (winPcFull == 1) {
+            winPcStyle = 3
+        }
+        switch (winPcStyle) {
+            case 3:
+                chatIfrema.src = hly + 'PCchat.html?cid=' + rand + '&kefuID=' + kefuID + '&kuaizhi_style=' + styleId + '&marketRobotId=' + marketRobotId + '&robotId=' + robotId + '&fkID=' + fkID + '&behavior=' + behavior + "&buttoncolor=" + winPcColor + "&fontColor=" + pcFontColor + "&fontSize=" + pcFontSize + '&topUrl=' + window.location.href.replace(/\?/g, '%%%%').replace(/=/g, '%%') + '&topTitle=' + encodeURIComponent(document.title) + '&onlineType=' + onlineType + "&copyRight=" + copyRight + "&imgFillet=" + imgFillet + '&imgCover=' + imgCover + '&winPcFull=' + winPcFull + '&winPcFillet=' + winPcFillet + "&edition=" + edition + "&viewWidth=" + winPcWidth + "&viewHeight=" + winPcHeight + "&baiduKeyword=" + encodeURIComponent(baiduKeyword)
+                chatIfrema.className = 'kuaizhiInitStyle kzct kuaizhi_chat_allwindow'
+                chatbox.className = 'kuaizhiInitStyle kuaizhi_chat_allwindow'
+                break;
+            case 2:
+                chatIfrema.src = hly + 'PCchat.html?cid=' + rand + '&kefuID=' + kefuID + '&kuaizhi_style=' + styleId + '&marketRobotId=' + marketRobotId + '&robotId=' + robotId + '&fkID=' + fkID + '&behavior=' + behavior + "&buttoncolor=" + winPcColor + "&fontColor=" + pcFontColor + "&fontSize=" + pcFontSize + '&topUrl=' + window.location.href.replace(/\?/g, '%%%%').replace(/=/g, '%%') + '&topTitle=' + encodeURIComponent(document.title) + '&onlineType=' + onlineType + "&copyRight=" + copyRight + "&imgFillet=" + imgFillet + '&imgCover=' + imgCover + '&winPcFull=' + winPcFull + '&winPcFillet=' + winPcFillet + "&edition=" + edition + "&viewWidth=" + winPcWidth + "&viewHeight=" + winPcHeight + "&baiduKeyword=" + encodeURIComponent(baiduKeyword)
+                chatIfrema.className = 'kuaizhiInitStyle kzct kuaizhi_chat'
+                chatbox.className = 'kuaizhiInitStyle kuaizhi_chat kuaizhi_pc_position'
+                break;
+            case 1:
+                chatIfrema.src = hly + 'PCchat-mini.html?cid=' + rand + '&kefuID=' + kefuID + '&kuaizhi_style=' + styleId + '&marketRobotId=' + marketRobotId + '&robotId=' + robotId + '&fkID=' + fkID + '&behavior=' + behavior + "&buttoncolor=" + winPcColor + "&fontColor=" + pcFontColor + "&fontSize=" + pcFontSize + '&topUrl=' + window.location.href.replace(/\?/g, '%%%%').replace(/=/g, '%%') + '&topTitle=' + encodeURIComponent(document.title) + '&onlineType=' + onlineType + "&copyRight=" + copyRight + "&imgFillet=" + imgFillet + '&imgCover=' + imgCover + '&winPcFull=' + winPcFull + '&winPcFillet=' + winPcFillet + "&edition=" + edition + "&baiduKeyword=" + encodeURIComponent(baiduKeyword)
+                chatIfrema.className = 'kuaizhiInitStyle kzct kuaizhi_chat_mini'
+                chatbox.className = 'kuaizhiInitStyle kuaizhi_chat_mini kuaizhi_pc_position'
+                break;
+            default:
+                break;
+        }
+
+        chatIfrema.id = 'kuaizhi_iframe'
+        $(chatbox).append(chatIfrema)
+        $(chatbox).addClass("kz_chat animated")
+        $("body").append(chatbox)
+
+
+
+
+        switch (winPcStation) {
+            // 右边document.body.clientWidth
+            case 1:
+                $(".kuaizhi_pc_position").css({
+                    top: window.innerHeight - winPcHeight - winPcBottomMargin + 'px',
+                    left: window.innerWidth - winPcWidth - winPcSideMargin + 'px'
+                })
+                windowtop = window.innerHeight - winPcHeight - winPcBottomMargin
+                windowleft = window.innerWidth - winPcWidth - winPcSideMargin
+                break;
+
+                // 左边
+            case 2:
+                $(".kuaizhi_pc_position").css({
+                    top: window.innerHeight - winPcHeight - winPcBottomMargin + 'px',
+                    left: winPcSideMargin + 'px'
+                })
+                windowtop = window.innerHeight - winPcHeight - winPcBottomMargin
+                windowleft = winPcSideMargin
+                break;
+                // 中间
+            case 3:
+
+                $(".kuaizhi_pc_position").css({
+                    top: (window.innerHeight - winPcHeight) / 2 + 'px',
+                    left: (window.innerWidth - winPcWidth) / 2 + 'px',
+                })
+                windowtop = (window.innerHeight - winPcHeight) / 2
+                windowleft = (window.innerWidth - winPcWidth) / 2
+                break;
+            default:
+                break;
+        }
+
+        $(document).find('.kz_chat').hide()
+
+        $('#kuaizhi_move_box').css({
+            borderRadius: winPcFillet + 'px'
+        })
+        $('#kuaizhi_move_box iframe').css({
+            borderRadius: winPcFillet + 'px',
+            overflow: 'hidden'
+        })
+
+        if (winPcStyle != 3) {
+            $('#kuaizhi_move_box').css({
+                width: winPcWidth + 'px',
+                height: winPcHeight + 'px'
+            })
+            $('#kuaizhi_move_box iframe').css({
+                width: winPcWidth + 'px',
+                height: winPcHeight + 'px'
+            })
+        }
+
+
+    }
+
+
+    /**
+     * @method 手机端的窗口呼出
+     * @description 根据方法向页面添加Iframe的手机端客服窗口
+     */
+    window.mbopenWindow = function (behavior) {
+        if (!isValid) {
+            return
+        }
+        clearInterval(timeControl)
+        var mbchatbxo = document.createElement('div')
+        mbchatbxo.className = 'kuaizhiInitStyle mbdiv'
+        var chatIfrema = document.createElement('iframe')
+        $(mbchatbxo).css({
+            display: 'none'
+        })
+        $(mbchatbxo).append(chatIfrema)
+        switch (winPhoneStyle) {
+            case 1:
+                chatIfrema.src = hly + 'MoblieChat.html?cid=' + rand + '&kefuID=' + kefuID + '&kuaizhi_style=' + styleId + '&marketRobotId=' + marketRobotId + '&robotId=' + robotId + '&fkID=' + fkID + '&behavior=' + behavior + '&topTitle=' + encodeURIComponent(document.title) + "&buttoncolor=" + winPhoneColor + "&fontColor=" + phoneFontColor + "&fontSize=" + phoneFontSize + '&topUrl=' + window.location.href.replace(/\?/g, '%%%%').replace(/=/g, '%%') + '&onlineType=' + onlineType + "&edition=" + edition + "&imgFillet=" + imgFillet + '&imgCover=' + imgCover + "&copyRight=" + copyRight + "&baiduKeyword=" + encodeURIComponent(baiduKeyword)
+                chatIfrema.className = 'kuaizhiInitStyle kzct kuaizhi_mobile_chat'
+                mbchatbxo.className = 'kzct kuaizhi_mobile_chat'
+                break;
+            case 2:
+                chatIfrema.src = hly + 'MoblieChat_big.html?cid=' + rand + '&kefuID=' + kefuID + '&kuaizhi_style=' + styleId + '&marketRobotId=' + marketRobotId + '&robotId=' + robotId + '&fkID=' + fkID + '&behavior=' + behavior + '&topTitle=' + encodeURIComponent(document.title) + "&buttoncolor=" + winPhoneColor + "&fontColor=" + phoneFontColor + "&fontSize=" + phoneFontSize + '&topUrl=' + window.location.href.replace(/\?/g, '%%%%').replace(/=/g, '%%') + '&onlineType=' + onlineType + "&edition=" + edition + "&imgFillet=" + imgFillet + '&imgCover=' + imgCover + "&copyRight=" + copyRight + "&baiduKeyword=" + encodeURIComponent(baiduKeyword)
+                chatIfrema.className = 'kuaizhiInitStyle kzct kuaizhi_mobile_chat'
+                mbchatbxo.className = 'kuaizhiInitStyle kzct kuaizhi_mobile_chat'
+                break;
+            default:
+                break;
+        }
+
+        chatIfrema.id = 'kuaizhi_iframe'
+
+        $(chatIfrema).css({
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            zIndex: '19940113',
+
+        })
+        $(mbchatbxo).css({
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            zIndex: '19940114',
+            display: 'none'
+        })
+        $("body").append(mbchatbxo)
+
+    }
+
+
+
+    // PC侧边按钮的控制状态
+    $(document).on('click', '.showkzSideBtnContent', function () {
+        //    判断页面的定位位置
+        if (document.querySelector('.kzSidePositionRight')) {
+            document.querySelector('.kzSidePositionRight').style.left = 0
+
+        }
+        if (document.querySelector('.kzSidePositionLeft')) {
+            document.querySelector('.kzSidePositionLeft').style.right = 0
+
+        }
+
+        if (document.querySelector('.kzSideBtnMsgLeft')) {
+            document.querySelector('.kzSideBtnMsgLeft').style.left = '-200px'
+
+        }
+        if (document.querySelector('.kzSideBtnMsgRight')) {
+            document.querySelector('.kzSideBtnMsgRight').style.right = '-200px'
+
+        }
+
+    })
+    $(document).on('click', '.hidekzSideBtnContent', function () {
+        //   判断页面的定位位置
+        if (document.querySelector('.kzSidePositionRight')) {
+            document.querySelector('.kzSidePositionRight').style.left = '200px'
+        }
+        if (document.querySelector('.kzSidePositionLeft')) {
+            document.querySelector('.kzSidePositionLeft').style.right = '200px'
+        }
+        if (document.querySelector('.kzSideBtnMsgLeft')) {
+            document.querySelector('.kzSideBtnMsgLeft').style.left = '0px'
+        }
+        if (document.querySelector('.kzSideBtnMsgRight')) {
+            document.querySelector('.kzSideBtnMsgRight').style.right = '0px'
+        }
+
+    })
+
+
+    // 手机端侧边按钮的状态
+    $(document).on('click', '.kzmbArrowSHOW', function () {
+        //    判断页面的定位位置
+        if (document.querySelector('.kzmbLeftCenter')) {
+            document.querySelector('.kzmbLeftCenter .kzmbLeft').style.left = 0
+            document.querySelector('.kzmbLeftCenter').style.bottom = 'unset'
+        }
+        if (document.querySelector('.kzmbRightCenter')) {
+            document.querySelector('.kzmbRightCenter .kzmbRight').style.right = 0
+            document.querySelector('.kzmbRightCenter').style.bottom = 'unset'
+        }
+
+        $('.kzmbArrowSHOW').hide()
+
+    })
+    $(document).on('click', '.kzmbArrowHIDE', function () {
+        //   判断页面的定位位置
+        if (document.querySelector('.kzmbLeftCenter')) {
+            document.querySelector('.kzmbLeftCenter .kzmbLeft').style.left = '-40vh'
+            document.querySelector('.kzmbLeftCenter').style.bottom = 'unset'
+        }
+        if (document.querySelector('.kzmbRightCenter')) {
+            document.querySelector('.kzmbRightCenter .kzmbRight').style.right = '-40vh'
+            document.querySelector('.kzmbRightCenter').style.bottom = 'unset'
+        }
+        $('.kzmbArrowSHOW').show()
+
+    })
+
+    // 识别用户什么时候离开页面
+    setInterval(function () {
+        visitorLeave(3)
+    }, (1000 * 60 * 10))
+
+    // 窗口关闭时触发的方法
+    window.onbeforeunload = function (event) {
+        visitorLeave(2)
+    }
+    // 具体离开的主要方法
+    window.visitorLeave = function (e) {
+        $.ajax({
+            type: 'post',
+            url: hlyurl + 'visitor/toVisitor/saveVisitTime',
+            data: JSON.stringify({
+                "companyRand": rand, //类型：String  必有字段  备注：企业rand
+                "visitorId": fkID, //类型：String  必有字段  备注：访客id
+                "type": e, //类型：Number  必有字段  备注：类型（2为访客离开，3为59分时访客更新redis状态）
+                "statisticsId": statisticsId
+            }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.status == 1) {
+
+                } else {
+                    console.error(data)
+                }
+            },
+            error: function (err) {
+                console.error(err)
+            }
+        })
+    }
+    // 集成表单方法
+    window.hly_p_active = function (active, obj) {
+        if (active == '') {
+            return false
+        }
+        $.ajax({
+            type: 'post',
+            url: hlyurl + 'company/integration/formIntegrationTrigger',
+            data: JSON.stringify({
+                'rand': rand,
+                'sign': active
+            }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+
+                if (result.status == 1) {
+                    // 即时通讯
+                    var message = {
+                        active: result.data.signName,
+                        obj: obj,
+                        isBullet: result.data.isBullet
+                    }
+                    var iframecontent = document.getElementById('kuaizhi_iframe')
+                    iframecontent.contentWindow.postMessage({
+                        msg: message,
+                        num: 111
+                    }, '*');
+                }
+            },
+            error: function (err) {}
+        })
+
+
+    }
+    window.showAlertMsg = function () {
+        var div = '<section class="kuaizhiInitStyle" id="kuaizhiShowAlertMsg" style="opacity:0;" >' +
+            '<article class="kuaizhiInitStyle kuaizhiShowAlertMsgBox" style="border-bottom:3px solid #' + winPcColor + '">' +
+            '<div class="kuaizhiInitStyle kuaizhiShowImg" onclick="kuaizhiShowBTN()">' +
+            '<img class="kuaizhiInitStyle" id="kuaizhiShowImg" src="" alt="">' +
+            '</div>' +
+            '<div class="kuaizhiInitStyle kuaizhiShowName" onclick="kuaizhiShowBTN()">' +
+            '<div class="kuaizhiInitStyle kuaizhiNAME">' +
+            '<span class="kuaizhiInitStyle"></span>' +
+            '<span class="kuaizhiInitStyle kuaizhiNUM"></span>' +
+            '</div>' +
+            '<div class="kuaizhiInitStyle" id="kuaizhiMSG"></div>' +
+            '</div>' +
+            '<div class="kuaizhiInitStyle kuaizhiShowClose">' +
+            '<svg onclick="hidekuaizhiShowAlertMsg()" t="1635750121075" class="kuaizhiInitStyle icon kuaizhiShowAlertClose" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2533"><path d="M512 456.310154L94.247385 38.557538a39.542154 39.542154 0 0 0-55.689847 0 39.266462 39.266462 0 0 0 0 55.689847L456.310154 512 38.557538 929.752615a39.542154 39.542154 0 0 0 0 55.689847 39.266462 39.266462 0 0 0 55.689847 0L512 567.689846l417.752615 417.752616c15.163077 15.163077 40.290462 15.36 55.689847 0a39.266462 39.266462 0 0 0 0-55.689847L567.689846 512 985.442462 94.247385a39.542154 39.542154 0 0 0 0-55.689847 39.266462 39.266462 0 0 0-55.689847 0L512 456.310154z" p-id="2534" fill="#dcdcdc"></path></svg>' +
+            '</div>' +
+            '</article>' +
+            '</section>'
+        $('body').append(div)
+    }
+    // PC的小窗点击
+    window.kuaizhiShowBTN = function () {
+        $('.kzPosition').show()
+        $('body').find('#kuaizhiShowAlertMsg').hide()
+        kuaizhichat()
+    }
+    // 手机小窗点击
+    window.hidekuaizhiShowAlertMsg = function () {
+        $('.kzPosition').show()
+        $('body').find('#kuaizhiShowAlertMsg').hide()
+    }
+    window.fileType = function (e, msg) {
+        // 普通消息
+        if (e == 0) {
+            return msg = msg.replace(/'<br>'/g, '')
+        }
+        // 文件
+        if (e == 1) {
+            return '[文件]'
+        }
+        if (e == 2) {
+            return '[图片]'
+        }
+        if (e == 3) {
+            return '[视频]'
+        }
+        if (e == 4) {
+            return '[地图]'
+        }
+        if (e == 13) {
+            return '[语音]'
+        }
+    }
+    window.mbKuaizhiShowAlertBox = function () {
+        var div = '<section class="kuaizhiInitStyle" id="mbKuaizhiShowAlertBox" style="opacity:0">' +
+            '<div class="kuaizhiInitStyle mbKuaizhiBigBox" style="border-bottom:3px solid #' + winPhoneColor + '">' +
+            '<div class="kuaizhiInitStyle mbKuaizhiBox" onclick="hidembKuaizhiShowAlertBox()">' +
+            '<article class="kuaizhiInitStyle mbKuaizhiShowName">' + '<img id="mbKuaizhiHeadImg" src="" alt="">' + '<span class="kuaizhiInitStyle" id="mbKuaizhiName"></span>' +
+            '<span class="kuaizhiInitStyle" id="mbkuaizhiNum"></span>' +
+            '</article>' +
+            '<article class="kuaizhiInitStyle mbKuaizhiShowMsg" id="mbKuaizhiMsg">' +
+            '</article>' +
+            '</div>' +
+            '<div class="kuaizhiInitStyle mbKuaizhiClose" >' +
+            '<svg onclick="closeMbKuaizhiShowAlertBox()" t="1635750121075" class="kuaizhiInitStyle icon mbKuaizhiShowAlertClose" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2533"><path d="M512 456.310154L94.247385 38.557538a39.542154 39.542154 0 0 0-55.689847 0 39.266462 39.266462 0 0 0 0 55.689847L456.310154 512 38.557538 929.752615a39.542154 39.542154 0 0 0 0 55.689847 39.266462 39.266462 0 0 0 55.689847 0L512 567.689846l417.752615 417.752616c15.163077 15.163077 40.290462 15.36 55.689847 0a39.266462 39.266462 0 0 0 0-55.689847L567.689846 512 985.442462 94.247385a39.542154 39.542154 0 0 0 0-55.689847 39.266462 39.266462 0 0 0-55.689847 0L512 456.310154z" p-id="2534" fill="#dcdcdc"></path></svg>' +
+            '</div>' +
+            '</div>' +
+            '</section>'
+
+        $('body').append(div)
+
+    }
+    window.mbKuaizhiShowAlertBox2 = function () {
+        var div = '<section class="kuaizhiInitStyle" id="mbKuaizhiShowAlertBox2" style="opacity:0">' +
+            '<div class="kuaizhiInitStyle mbKuaizhiShowMsgBox2" style="border-bottom:3px solid #' + winPhoneColor + '">' +
+            '<article class="mbKuaizhiShowMsg2">' +
+            '<div class="kuaizhiInitStyle" id="mbKuaizhiMsg" onclick="hidembKuaizhiShowAlertBox()">' +
+            '</div>' +
+            '<div>' +
+            '<svg onclick="closeMbKuaizhiShowAlertBox()" t="1635750121075" class="kuaizhiInitStyle icon mbKuaizhiShowAlertClose2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2533"><path d="M512 456.310154L94.247385 38.557538a39.542154 39.542154 0 0 0-55.689847 0 39.266462 39.266462 0 0 0 0 55.689847L456.310154 512 38.557538 929.752615a39.542154 39.542154 0 0 0 0 55.689847 39.266462 39.266462 0 0 0 55.689847 0L512 567.689846l417.752615 417.752616c15.163077 15.163077 40.290462 15.36 55.689847 0a39.266462 39.266462 0 0 0 0-55.689847L567.689846 512 985.442462 94.247385a39.542154 39.542154 0 0 0 0-55.689847 39.266462 39.266462 0 0 0-55.689847 0L512 456.310154z" p-id="2534" fill="#dcdcdc"></path></svg>' +
+            '</div>' +
+            '</article>' +
+            '<span class="kuaizhiInitStyle"></span>' +
+            '</div>' +
+            '<div class="kuaizhiInitStyle mbKuaizhiShowImg2">' +
+            '<article>' +
+            '<img class="kuaizhiInitStyle" id="mbKuaizhiHeadImg" onclick="hidembKuaizhiShowAlertBox()" src="" alt="">' +
+            '<span class="kuaizhiInitStyle" id="mbkuaizhiNum"></span>' +
+            '</article>' +
+            '</div>' +
+            '</section>'
+        $('body').append(div)
+    }
+    window.hidembKuaizhiShowAlertBox = function () {
+        $('.kzmbOpacity:not(.kzmbSideBtn)').show()
+        if (mbShowAlertType == 1) {
+            $('#mbKuaizhiShowAlertBox').hide()
+        } else {
+            $('#mbKuaizhiShowAlertBox2').hide()
+        }
+        kuaizhiMobileChat()
+    }
+    window.closeMbKuaizhiShowAlertBox = function () {
+        $('.kzmbOpacity:not(.kzmbSideBtn)').show()
+        if (mbShowAlertType == 1) {
+            $('#mbKuaizhiShowAlertBox').hide()
+        } else {
+            $('#mbKuaizhiShowAlertBox2').hide()
+        }
+    }
+    $(document).on('click', '#KZClosekzHover', function () {
+        $(this).parent().hide()
+    })
+
+    $(document).on('click', '#kzHoverMessage .kzHoverMessageMB', function () {
+        kuaizhichat()
+    })
+});

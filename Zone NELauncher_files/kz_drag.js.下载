@@ -1,0 +1,190 @@
+jQuery(function ($) {
+    var inputStatus = false
+    window.inputmove = function (event) {
+        var inputY = event.clientY;
+        var inputStatus = true
+        var warpHeight = $('.chat_chatbody_warp').height()
+        var textareaHeight = $('#chat_textarea').height()
+        window.onmousemove = function (event) {
+            if (inputStatus) {
+                var inputmoveY = event.clientY
+                var moveHeight = inputmoveY - inputY
+
+                $('body').css({
+                    userSelect: 'none'
+                })
+                if ($("#chat_textarea").height() < 50) {
+                    inputStatus = false
+                    $("#chat_textarea").height(50)
+                    $('body').css({
+                        userSelect: 'auto'
+                    })
+                    $(".chat_chatbody_warp").css({
+                        height: warpHeight + textareaHeight - 50 + 'px'
+                    })
+                    return
+                }
+                if ($(".chat_chatbody_warp").height() < 50) {
+                    inputStatus = false
+                    $(".chat_chatbody_warp").height(50)
+                    $('body').css({
+                        userSelect: 'auto'
+                    })
+                    $("#chat_textarea").css({
+                        height: warpHeight + textareaHeight - 50 + 'px'
+                    })
+                    return
+                }
+                $("#chat_textarea").css({
+                    height: textareaHeight - moveHeight + 'px'
+                })
+                $(".chat_chatbody_warp").css({
+                    height: warpHeight + moveHeight + 'px'
+                })
+
+            }
+        }
+        window.onmouseup = function () {
+            inputStatus = false
+            $('body').css({
+                userSelect: 'auto'
+            })
+        }
+    }
+
+    var isDown = false;
+
+    //实时监听鼠标位置
+    var moveX = 0;
+    var moveY = 0;
+
+    //记录鼠标按下瞬间的位置
+    var x = 0;
+    var y = 0;
+
+    //鼠标按下时移动的偏移量
+    var mouseMoveX = 0;
+    var mouseMoveY = 0;
+
+    //div的位置
+    var div_x = 0;
+    var div_y = 0;
+
+    window.onresize = function () {
+        var boxw = $(document).find('#kuaizhi_move_box').innerWidth()
+        var boxh = $(document).find('#kuaizhi_move_box').innerHeight()
+
+        var windowH = document.documentElement.clientHeight
+        var windowW = document.documentElement.clientWidth
+        // console.log("windowH===",windowH,"windowW===",windowW)
+        if ($('#kuaizhi_move_box').length > 0) {
+            var nowW = $(document).find('#kuaizhi_move_box').position().left
+            var nowH = $(document).find('#kuaizhi_move_box').position().top
+            if (nowW <= 0) {
+                nowW = 0
+            }
+            if (nowH <= 0) {
+                nowH = 0
+            }
+            if ((nowW + boxw) >= windowW) {
+                if ((windowW - boxw) <= 0) {
+                    document.getElementById("kuaizhi_move_box").style.left = 0 + 'px'
+                } else {
+                    document.getElementById("kuaizhi_move_box").style.left = (windowW - boxw) + 'px'
+                }
+
+            }
+            if ((nowH + boxh) >= windowH) {
+                if ((windowH - boxh) <= 0) {
+                    document.getElementById("kuaizhi_move_box").style.top = 0 + 'px'
+                } else {
+                    document.getElementById("kuaizhi_move_box").style.top = (windowH - boxh) + 'px'
+                }
+
+            }
+        }
+
+
+    }
+    //鼠标按下事件
+    window.myDown = function (event) {
+        // console.log('开始拖拽');
+        x = event.clientX;
+        y = event.clientY;
+        isDown = true;
+        //获取DIV的位置
+
+        div_x = $('#kuaizhi_move_box')[0].offsetLeft;
+        div_y = $('#kuaizhi_move_box')[0].offsetTop;
+
+
+
+        var div_w = $('#kuaizhi_move_box').innerWidth()
+        var div_h = $('#kuaizhi_move_box').innerHeight()
+        // 获取元素宽高
+        // 获取可是窗口宽高
+        var window_w = document.documentElement.clientWidth
+        var window_h = document.documentElement.clientHeight
+        $('.kuaizhiMove').css({
+            height: '100%',
+            width: '100%'
+        })
+
+        window.onmousemove = function (event) {
+            //当鼠标按下时才执行
+            moveX = event.clientX;
+            moveY = event.clientY;
+            //计算鼠标移动偏移量
+            mouseMoveX = moveX - x;
+            mouseMoveY = moveY - y;
+            var new_div_x = div_x + mouseMoveX;
+            var new_div_y = div_y + mouseMoveY;
+
+            if (new_div_x < 0) {
+                new_div_x = 0
+            } else if ((new_div_x + div_w) > window_w) {
+                new_div_x = window_w - div_w
+            }
+            if (new_div_y < 0) {
+                new_div_y = 0
+            } else if ((new_div_y + div_h) > window_h) {
+                new_div_y = window_h - div_h
+            }
+
+
+            if (isDown) {
+                document.getElementById("kuaizhi_move_box").style.left = new_div_x + 'px'
+                windowleft = new_div_x
+
+                document.getElementById("kuaizhi_move_box").style.top = new_div_y + 'px'
+                windowtop = new_div_y
+
+                $('body').css({
+                    userSelect: 'none'
+                })
+
+            }
+        }
+        window.onmouseup = function () {
+            $('.kuaizhiMove').css({
+                height: '43px',
+                width: 'calc(100% - 130px)'
+            })
+            if (windowleft <= 0) {
+                windowleft = 0
+                document.getElementById("kuaizhi_move_box").style.left = windowleft + 'px'
+            }
+            if (windowtop <= 0) {
+                windowtop = 0
+                document.getElementById("kuaizhi_move_box").style.top = windowtop + 'px'
+            }
+
+            $('body').css({
+                userSelect: 'auto'
+            })
+            isDown = false;
+            mouseMoveX = 0;
+            mouseMoveY = 0;
+        }
+    }
+});

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zone NELauncher</title>
+    <link rel="stylesheet" type="text/css" href="Css/AntDesignStyles.css">
+    <link rel="stylesheet" type="text/css" href="Css/IndexStyles.css">
+    <link rel="stylesheet" type="text/css" href="Css/NotificationStyles.css">
+</head>
+<body class="none-select" onselectstart="return false;" unselectable="on">
+    <div id="formMain" class="form-main" oncontextmenu="self.event.returnValue=false;">
+        <div class="label-title">Zone NELauncher 1.0.1.7.240808B</div>
+        <div class="ant-tabs-container">
+            <div class="ant-tabs-header">
+                <div class="ant-tab active" data-target="tabAccount">账号</div>
+                    <div class="ant-tab" data-target="tabServer" disable-message="演示中不可选中此选项">服务器</div>
+                <div class="ant-tab" data-target="tabProxy" disable-message="演示中不可选中此选项">代理</div>
+                <div class="ant-tab" data-target="tabSettings" disable-message="演示中不可选中此选项">设置</div>
+            </div>
+            <div class="ant-tabs-content">
+                <div id="tabAccount" class="ant-tab-content active">
+                    <div class="ant-tabs-container">
+                        <div class="ant-tabs-header">
+                            <div class="ant-tab active" data-target="tabAccountLogin">登录</div>
+                            <div class="ant-tab" data-target="tabAccountHistory" disable-message="演示中不可选中此选项">历史</div>
+                        </div>
+                        <div class="ant-tabs-content">
+                            <div id="tabAccountLogin" class="ant-tab-content active">
+                                <div class="tab-account">
+                                    <p class="label-login">登录</p>
+                                    <input id="inputAccount" type="text" class="ant-input" style="width: 284px; height: 33px; margin-bottom: 20px;"/>
+                                    <input id="inputPassword" type="text" class="ant-input" style="width: 284px; height: 33px; margin-bottom: 30px;"/>
+                                    <a id="buttonLogin" class="ant-button">随机登录</a>
+                                </div>
+                            </div>
+                            <div id="tabAccountHistory" class="ant-tab-content">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tabServer" class="ant-tab-content">
+                    <div id="tabAccount" class="ant-tab-content active">
+                        <div class="ant-tabs-container">
+                            <div class="ant-tabs-header">
+                                <div class="ant-tab active" data-target="tabServerNetServer">网络服务器</div>
+                                <div class="ant-tab" data-target="tabServerRentalServer">租赁服务器</div>
+                                <div class="ant-tab" data-target="tabServerSkin">皮肤</div>
+                                <div class="ant-tab" data-target="tabServerPEServer">基岩版服务器</div>
+                            </div>
+                            <div class="ant-tabs-content">
+                                <div id="tabServerNetServer" class="ant-tab-content active">
+                                </div>
+                                <div id="tabServerRentalServer" class="ant-tab-content">
+                                </div>
+                                <div id="tabServerSkin" class="ant-tab-content">
+                                </div>
+                                <div id="tabServerPEServer" class="ant-tab-content">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tabProxy" class="ant-tab-content">
+                </div>
+                <div id="tabSettings" class="ant-tab-content">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ant-notification-container" id="notificationContainer"></div>
+    <script src="Js/IndexScripts.js"></script>
+    <script src="Js/NotificationScripts.js"></script>
+</body>
+</html>
