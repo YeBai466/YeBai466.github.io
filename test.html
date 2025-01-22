@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        html,
+        body {
+            /* 核心属性 让页面平滑滚动*/
+            scroll-behavior: smooth;
+        }
+
+        #one,
+        #two,
+        #three {
+            width: 80%;
+            height: 700px;
+            background-color: #eee;
+            margin: 50px auto;
+            font-size: 50px;
+            text-align: center;
+            line-height: 700px;
+        }
+
+        /* 定位置顶按钮 */
+        .backToTop {
+            position: fixed;
+            right: 20px;
+            bottom: 100px;
+            background-color: red;
+            text-align: center;
+            line-height: 60px;
+            width: 60px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .backToTop:hover {
+            background-color: darkred;
+        }
+
+        .navigation {
+            position: fixed;
+            right: 20px;
+            bottom: 200px;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            line-height: 60px;
+            width: 60px;
+            color: aliceblue;
+            text-decoration: none;
+            margin-bottom: 10px;
+            background-color: skyblue;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: dodgerblue;
+        }
+    </style>
+</head>
+<body>
+<section id="one">模块1</section>
+<section id="two">模块2</section>
+<section id="three">模块3</section>
+
+<div class="navigation">
+    <a href="#one">01</a>
+    <a href="#two">02</a>
+    <a href="#three">03</a>
+</div>
+
+<a href="#one" class="backToTop">
+    置顶
+</a>
+</body>
+</html>

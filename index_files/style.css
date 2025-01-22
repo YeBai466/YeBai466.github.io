@@ -1,0 +1,1108 @@
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #2c3e50;
+    --accent-color: #e74c3c;
+    --background-color: #f5f6fa;
+    --text-color: #2c3e50;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    scroll-behavior: smooth;
+}
+
+/* 导航栏样式 */
+nav {
+    position: fixed;
+    width: 100%;
+    padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    animation: slideDown 0.8s ease;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    position: relative;
+    cursor: pointer;
+}
+
+.logo:hover::after {
+    content: '🎮';
+    position: absolute;
+    right: -20px;
+    animation: bounce 0.5s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.nav-links a {
+    margin-left: 2rem;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+/* 主页英雄区域 */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5%;
+    background: linear-gradient(-45deg, 
+        #e8f0fe,  /* 浅蓝 */
+        #c5e1ff,  /* 天蓝 */
+        #ffd6d6,  /* 浅粉 */
+        #fff1e6,  /* 浅橙 */
+        #e8ffe8,  /* 浅绿 */
+        #e6e6ff   /* 浅紫 */
+    );
+    background-size: 600% 600%;
+    animation: gradientBG 15s ease infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.title-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.main-title {
+    font-size: 3.5rem;
+    color: var(--secondary-color);
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.main-title::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, 
+        rgba(74,144,226,0.2),
+        rgba(231,76,60,0.2),
+        rgba(46,204,113,0.2)
+    );
+    filter: blur(15px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: 10px;
+}
+
+.main-title:hover::before {
+    opacity: 1;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+    animation: fadeInLeft 1s ease 0.3s backwards;
+}
+
+.hero-image {
+    max-width: 50%;
+    padding: 2rem;
+}
+
+.hero-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeInRight 1s ease 0.3s backwards;
+}
+
+/* 按钮样式 */
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    animation: fadeInUp 1s ease 0.6s backwards;
+}
+
+.download-btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+}
+
+.download-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease;
+}
+
+.download-btn:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.download-btn.large {
+    padding: 1.2rem 3rem;
+    font-size: 1.2rem;
+}
+
+.learn-more-btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.learn-more-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* 特性区域 */
+.features {
+    padding: 6rem 2rem;
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* 添加背景动画效果 */
+.features::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(74, 144, 226, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(80, 200, 120, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255, 127, 80, 0.05) 0%, transparent 50%);
+    animation: gradientMove 20s ease infinite;
+    opacity: 0.5;
+}
+
+@keyframes gradientMove {
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 2.8rem;
+    margin-bottom: 4rem;
+    color: var(--secondary-color);
+    position: relative;
+    background: linear-gradient(45deg, #4a90e2, #2c3e50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientText 6s ease infinite;
+}
+
+@keyframes gradientText {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.feature-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    text-align: left;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.feature-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.feature-card:hover::after {
+    transform: translateX(100%);
+}
+
+.icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: conic-gradient(from 45deg, var(--primary-color), #6ba4e5, var(--primary-color));
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 5px 15px rgba(74, 144, 226, 0.2),
+        0 0 0 2px rgba(255, 255, 255, 0.5) inset;
+    animation: iconRotate 10s linear infinite;
+}
+
+@keyframes iconRotate {
+    from { background-position: 0% center; }
+    to { background-position: 200% center; }
+}
+
+.icon-wrapper i {
+    font-size: 1.8rem;
+    color: white;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+}
+
+.feature-card p {
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.feature-details {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-details li {
+    margin: 0.8rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #555;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.feature-details li:hover {
+    transform: translateX(10px);
+    color: var(--primary-color);
+}
+
+.feature-details li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    transition: transform 0.3s ease;
+    font-family: "Font Awesome 5 Free";
+    content: '\f105';
+    font-weight: 900;
+}
+
+.feature-details li:hover::before {
+    transform: translateX(5px);
+}
+
+.feature-card:hover {
+    transform: translateY(-10px) rotateX(5deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.feature-card:hover .icon-wrapper {
+    transform: scale(1.1) rotate(10deg);
+}
+
+/* 特性卡片独特效果 */
+.foundation .icon-wrapper {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+}
+
+.functions .icon-wrapper {
+    background: linear-gradient(135deg, #50c878, #3da15f);
+}
+
+.details .icon-wrapper {
+    background: linear-gradient(135deg, #ff7f50, #e66a3e);
+}
+
+/* Slogan样式 */
+.slogan {
+    text-align: center;
+    margin-top: 4rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transform: translateY(0);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.slogan:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.slogan h3 {
+    font-size: 2rem;
+    background: linear-gradient(45deg, var(--primary-color), #6ba4e5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    animation: gradientText 6s ease infinite;
+}
+
+.slogan p {
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.slogan::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(74,144,226,0.1) 0%, transparent 70%);
+    animation: rotateBg 10s linear infinite;
+}
+
+@keyframes rotateBg {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 动画效果 */
+@keyframes cardFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.feature-card {
+    animation: cardFloat 6s ease-in-out infinite;
+    animation-delay: calc(var(--card-index) * 0.2s);
+}
+
+.feature-details li {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideIn 0.5s ease forwards;
+    animation-delay: calc(var(--item-index) * 0.1s + 0.3s);
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 下载区域 */
+.download {
+    padding: 5rem 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.download::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    animation: shine 8s infinite linear;
+}
+
+@keyframes shine {
+    to {
+        transform: translateX(50%);
+    }
+}
+
+.download h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--secondary-color);
+}
+
+.version-info {
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.version-info p {
+    margin: 0.5rem 0;
+}
+
+/* 页脚 */
+footer {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 3rem 2rem 1rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.footer-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 2rem;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color);
+}
+
+.footer-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.footer-links a:hover::after {
+    width: 100%;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 动画效果 */
+@keyframes float {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-15px) rotate(2deg);
+    }
+    50% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    75% {
+        transform: translateY(15px) rotate(-2deg);
+    }
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+}
+
+.floating {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-text {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.animate-text-delay {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease forwards 0.3s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 100px;
+    }
+
+    .hero-content {
+        padding-top: 0;
+    }
+
+    .hero-image {
+        max-width: 100%;
+        margin-top: 2rem;
+    }
+
+    .cta-buttons {
+        justify-content: center;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-links {
+        margin-top: 1rem;
+    }
+
+    .footer-links a {
+        display: block;
+        margin: 0.5rem 0;
+    }
+
+    .hero-content h1,
+    .hero-content .subtitle,
+    .cta-buttons,
+    .hero-image img {
+        animation-name: fadeInUp;
+        animation-duration: 0.8s;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px) scale(1.02);
+    }
+} 
+
+/* 标题区域样式 */
+.hero-content {
+    position: relative;
+}
+
+.title-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+    transition: all 0.15s ease;
+}
+
+/* 打字机效果 */
+.typewriter {
+    position: relative;
+    display: inline-block;
+    color: var(--secondary-color);
+    font-weight: bold;
+    font-size: 3.5rem;
+    white-space: nowrap;
+}
+
+.cursor {
+    display: inline-block;
+    width: 4px;
+    height: 3.5rem;
+    margin-left: 4px;
+    background: linear-gradient(180deg, #4a90e2, #6ba4e5);
+    box-shadow: 0 0 5px #fff,
+                0 0 10px #4a90e2,
+                0 0 20px #6ba4e5,
+                0 0 30px #92c0f0;
+    animation: blink 0.7s infinite;
+    vertical-align: middle;
+    border-radius: 2px;
+}
+
+@keyframes blink {
+    0%, 100% { 
+        opacity: 1;
+        transform: scaleY(1);
+        box-shadow: 0 0 5px #fff,
+                    0 0 10px #4a90e2,
+                    0 0 20px #6ba4e5,
+                    0 0 30px #92c0f0;
+    }
+    50% { 
+        opacity: 0.5;
+        transform: scaleY(0.8);
+        box-shadow: 0 0 2px #fff,
+                    0 0 5px #4a90e2,
+                    0 0 10px #6ba4e5,
+                    0 0 15px #92c0f0;
+    }
+} 
+
+/* 添加动态光效 */
+.hero::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(74,144,226,0.05) 0%, rgba(74,144,226,0) 70%);
+    animation: lightMove 10s linear infinite;
+    z-index: 0;
+}
+
+@keyframes lightMove {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+} 
+
+/* 添加彩蛋相关样式 */
+@keyframes partyGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(
+        45deg,
+        #ff0000,
+        #00ff00,
+        #0000ff,
+        #ffff00,
+        #ff00ff
+    );
+    border-radius: 50%;
+    animation: confettiFall linear forwards;
+    z-index: 1000;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+    }
+}
+
+/* 为特性卡片添加点击效果 */
+.feature-card:active {
+    transform: scale(0.95);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* 添加梅花样式 */
+.sakura {
+    position: absolute;
+    background: #ffd7e6;
+    border-radius: 50%;
+    pointer-events: none;
+    transform-origin: center;
+}
+
+.sakura::before {
+    content: '❀';
+    position: absolute;
+    color: #ff9ecd;
+    font-size: 10px;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes fall {
+    0% {
+        transform: translate(0, -10px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(20px, 20px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 按钮悬停效果增强 */
+.download-btn, .learn-more-btn {
+    position: relative;
+    overflow: visible;
+    z-index: 1;
+}
+
+.download-btn:hover, .learn-more-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+} 
+
+/* 一言组件样式 */
+.hitokoto-container {
+    margin-top: 3rem;
+    padding: 0;
+    max-width: 600px;
+    margin-left: 0;
+    position: relative;
+    left: 0;
+}
+
+.hitokoto-box {
+    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 0.8rem 1.5rem;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    animation: slideUp 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+    width: fit-content;
+    min-width: 300px;
+    margin-left: 0;
+}
+
+.hitokoto-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.close-btn {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--text-color);
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+#hitokoto {
+    text-align: left;
+    font-size: 1rem;
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    padding-right: 20px;
+}
+
+#hitokoto_text {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+#hitokoto_text:hover {
+    color: var(--primary-color);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 一言关闭动画 */
+.hitokoto-box.closing {
+    animation: slideDown 0.5s ease forwards;
+}
+
+@keyframes slideDown {
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+} 
+
+/* 添加一言更新动画 */
+.hitokoto-box.updating {
+    animation: hitokotoUpdate 0.5s ease;
+}
+
+@keyframes hitokotoUpdate {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} 
+
+/* 按钮组样式 */
+.button-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    background: white;
+    border: 2px solid transparent;
+    color: var(--text-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn i {
+    font-size: 1.1rem;
+}
+
+/* 下载按钮 */
+.download-btn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+}
+
+/* 购买按钮 */
+.purchase-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.purchase-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+
+/* 文档按钮 */
+.docs-btn {
+    background: white;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.docs-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* 了解更多按钮 */
+.more-btn {
+    background: white;
+    border-color: var(--text-color);
+}
+
+.more-btn:hover {
+    background: var(--text-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* 提示文字 */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 0.875rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+[data-tooltip]:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-4px);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .button-group {
+        justify-content: center;
+    }
+    
+    .action-btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
